@@ -1,0 +1,13 @@
+
+{
+	"name": "hxrnl",
+	"license": "MIT",
+	"tags": ["hxrnl"],
+	"description": "rnl bindings for haxe",
+	"version": "0.1.0",
+	"releasenote": "",
+	"contributors": ["vano"],
+	"dependencies": {
+	},
+	"classPath": "source"
+}
