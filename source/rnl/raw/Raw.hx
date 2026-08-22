@@ -13,6 +13,7 @@ import rnl.raw.Types.CharPtr;
 @:keep
 @:hlNative("rnl")
 extern class _HlPrim {
+	static function i64_to_ptr(lo:Int, hi:Int):Ptr;
 	static function RNL_free(a_pointer:hl.Bytes):Void;
 	static function RNL_protocol_version_lo():Int;
 	static function RNL_protocol_version_hi():Int;

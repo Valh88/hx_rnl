@@ -1,6 +1,4 @@
 import rnl.Instance;
-import rnl.internal.RnlBuild;
-
 class Main {
 	public static function main() {
 		var inst = new Instance();

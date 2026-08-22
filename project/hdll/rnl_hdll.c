@@ -9,6 +9,13 @@
 /* The real API, verbatim from the header. */
 #include "rnl.h"
 
+/* --- Int64 <-> pointer conversion helpers --- */
+HL_PRIM vbyte* HL_NAME(i64_to_ptr)(int32_t lo, int32_t hi) {
+	uintptr_t v = ((uintptr_t)(uint32_t)hi << 32) | (uint32_t)lo;
+	return (vbyte*)(void*)(uintptr_t)v;
+}
+DEFINE_PRIM(_BYTES, i64_to_ptr, _I32 _I32);
+
 void RNL_free(void *a_pointer);
 uint64_t RNL_protocol_version(void);
 int32_t RNL_instance_create(rnl_instance_h *a_instance);
