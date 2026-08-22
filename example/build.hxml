@@ -6,3 +6,5 @@
 -hl bin/hlc/Main.c
 --next
 -hl bin/hl/Main.hl
+
+ # haxelib run formatter -s src
