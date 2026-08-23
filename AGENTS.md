@@ -106,8 +106,11 @@ Host certificate API.
 
 ## Runtime deps
 
-- hxcpp: copy `librnl.so` next to binary or set `LD_LIBRARY_PATH`
+- hxcpp: automatic — `RnlBuild.hx` ships `librnl.so` into the output dir via
+  `<copyFile>` and links with `-rpath $ORIGIN` + package ndll path. No manual
+  copy, no LD_LIBRARY_PATH.
 - HL: place `rnl.hdll` + `librnl.so` next to `.hl` file or in `HL_PATH`
+- hlc: place `rnl.hdll` + `librnl.so` next to the binary
 
 ## External dependency
 

@@ -16,8 +16,8 @@ cd "$DIR"
 
 build_cpp() {
 	haxe -cp ../source -main Main --cpp bin/cpp -D HXCPP_M64
-	cp "$RNL_ROOT/lib/bin/linux-x64/librnl.so" bin/cpp/
-	command -v patchelf >/dev/null && patchelf --set-rpath '$ORIGIN' bin/cpp/Main || true
+	# librnl.so is copied into bin/cpp automatically by RnlBuild.hx <copyFile>,
+	# and the binary has $ORIGIN rpath baked in — nothing else needed.
 	echo "=== hxcpp ==="
 	./bin/cpp/Main
 }

@@ -18,11 +18,17 @@ package rnl.internal;
 	<target id="haxe">
 		<libpath name="${haxelib:hxrnl}/ndll/Linux64" if="linux" />
 		<lib name="-lrnl" if="linux" />
+		<!-- find librnl.so next to the binary, or straight from the package -->
+		<flag value="-Wl,-rpath,$ORIGIN" if="linux" />
+		<flag value="-Wl,-rpath,${haxelib:hxrnl}/ndll/Linux64" if="linux" />
 		<libpath name="${haxelib:hxrnl}/ndll/win64" if="windows" />
 		<lib name="-lRNL" if="windows" />
 		<libpath name="${haxelib:hxrnl}/ndll/android-arm64" if="android && HXCPP_ARM64" />
 		<lib name="-lrnl" if="android && HXCPP_ARM64" />
 		<libpath name="${haxelib:hxrnl}/ndll/android-arm" if="android && HXCPP_ARMV7" />
 		<lib name="-lrnl" if="android && HXCPP_ARMV7" />
-	</target>')
+	</target>
+	<!-- ship the runtime library into the build output automatically -->
+	<copyFile name="librnl.so" from="${haxelib:hxrnl}/ndll/Linux64" if="linux" />
+	<copyFile name="RNL.dll" from="${haxelib:hxrnl}/ndll/win64" if="windows" />')
 class RnlBuild {}

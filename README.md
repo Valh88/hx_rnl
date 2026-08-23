@@ -48,9 +48,11 @@ class Main {
 
 ### Runtime
 
-Copy `librnl.so` next to the binary or set `LD_LIBRARY_PATH`:
+Nothing to do for hxcpp: `RnlBuild.hx` copies `librnl.so` into the build
+output automatically (`<copyFile>`), and the binary carries
+`-rpath $ORIGIN:<package>/ndll/Linux64` — just run it:
 
-    LD_LIBRARY_PATH=./bin/cpp ./bin/cpp/Main
+    ./bin/cpp/Main
 
 ## Targets
 
