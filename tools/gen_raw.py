@@ -131,6 +131,9 @@ A('class Raw {')
 A('\tinline static function _low(v:Int64):Int return Int64.getLow(v);')
 A('\tinline static function _high(v:Int64):Int return Int64.getHigh(v);')
 A('\tinline static function _mk(lo:Int, hi:Int):Int64 return Int64.make(hi, lo);')
+A('')
+A('\t/** Convert two Int32 halves into a native pointer */')
+A('\tpublic static function ptrFromI64(lo:Int, hi:Int):Ptr return _HlPrim.i64_to_ptr(lo,hi);')
 for ret, name, args in entries:
     if name == 'RNL_protocol_version':
         A('\tpublic static function %s():Int64 {' % name)

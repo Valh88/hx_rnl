@@ -521,6 +521,9 @@ class Raw {
 	inline static function _low(v:Int64):Int return Int64.getLow(v);
 	inline static function _high(v:Int64):Int return Int64.getHigh(v);
 	inline static function _mk(lo:Int, hi:Int):Int64 return Int64.make(hi, lo);
+
+	/** Convert two Int32 halves into a native pointer */
+	public static function ptrFromI64(lo:Int, hi:Int):Ptr return _HlPrim.i64_to_ptr(lo,hi);
 	public static function RNL_free(a_pointer:hl.Bytes):Void {
 		_HlPrim.RNL_free(a_pointer);
 	}
