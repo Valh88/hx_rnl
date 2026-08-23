@@ -178,6 +178,7 @@ class Host extends HandleWrapper
 					onPeerReceive(ev);
 					true;
 				} else false;
+				// callbacs dont work
 			case EventType.PeerCheckConnectionToken:
 				if (onPeerCheckConnectionToken != null) onPeerCheckConnectionToken(ev); else false; // never fires: C ABI doesn't expose the callback
 			case EventType.PeerCheckAuthenticationToken:
