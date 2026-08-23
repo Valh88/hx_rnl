@@ -3,6 +3,7 @@ import rnl.internal.RnlBuild;
 import rnl.Instance;
 import rnl.Network;
 import rnl.Network.VirtualNetwork;
+import rnl.Network.RealNetwork;
 import rnl.Network.InterferenceNetwork;
 import rnl.Host;
 import rnl.Address;
@@ -37,6 +38,7 @@ class Main {
 		testFragmentation();
 		testDisconnectData();
 		testHostConfig();
+		testHandlersFlushDns();
 		trace(failures == 0 ? 'ALL TESTS PASS' : 'FAILURES: $failures');
 		if (failures > 0) Sys.exit(1);
 	}
@@ -302,5 +304,51 @@ class Main {
 		var mtuStr = approved ? Std.string(peer.mtu) : "n/a";
 		ok(name, okCond && (!approved || mtuOk),
 			'${detail.join(" ")}, approved=$approved, peer mtu=$mtuStr');
+	}
+
+	// ------------------------------------------- 7 handlers / flush / dns
+
+	static function testHandlersFlushDns() {
+		var name = "handlers";
+		var p = makePair();
+		var peer:Peer = null;
+
+		var connEv = false, gotPong = false, discEv = false, sent = false;
+		var kicked = false;
+
+		// callback-style: no manual switch/eventFree — service() dispatches.
+		p.srv.onPeerConnect = function(ev) connEv = true;
+		p.srv.onPeerReceive = function(ev) {
+			if (ev.message.getBytes().toString() == "ping")
+				p.srv.broadcast(0, haxe.io.Bytes.ofString("pong"));
+		};
+		p.srv.onPeerDisconnect = function(ev) discEv = true;
+		p.cli.onPeerApproval = function(ev) {
+			if (!sent) { sent = true; peer.getChannel(0).send(haxe.io.Bytes.ofString("ping")); }
+		};
+		p.cli.onPeerReceive = function(ev) {
+			if (ev.message.getBytes().toString() == "pong") gotPong = true;
+		};
+
+		peer = p.cli.connect(p.addr, 1, haxe.Int64.ofInt(5));
+		var ticks = 0;
+		while (ticks < 8000 && !gotPong) { p.srv.service(1); p.cli.service(1); ticks++; }
+
+		if (peer != null && !kicked) {
+			kicked = true;
+			peer.disconnect(haxe.Int64.ofInt(0));
+		}
+		while (ticks < 16000 && !discEv) { p.srv.service(1); p.cli.service(1); ticks++; }
+
+		var flushOk = p.srv.flush();
+
+		// DNS через реальную сеть (localhost всегда резолвится через hosts)
+		var realNet = new RealNetwork(p.inst);
+		var resolved = realNet.resolveHost("localhost", 1);
+		var dnsOk = resolved != null;
+		realNet.dispose();
+
+		ok(name, sent && gotPong && connEv && discEv && flushOk && dnsOk,
+			'sent=$sent pong=$gotPong connectEv=$connEv disconnectEv=$discEv flush=$flushOk dns=$dnsOk');
 	}
 }

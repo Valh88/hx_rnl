@@ -10,6 +10,21 @@ class Network extends HandleWrapper {
 	#else
 	public inline function native():Dynamic return h();
 	#end
+
+	/**
+		Resolve a host name to an address through this network's resolver.
+		family: 1 = IPv4 (default), 2 = IPv6. Returns null on failure.
+		Uses real OS sockets, so it works on RealNetwork only.
+	**/
+	public function resolveHost(name:String, family:Int = 1):Null<Address> {
+		var nb = Bytes.ofString(name);
+		var addr = new Address();
+		var ok = Bytes.alloc(4);
+		var status = Raw.RNL_network_address_set_host(h(), Native.charData(nb),
+			nb.length, family, addr.native(), Native.data(ok));
+		if (status != 0 || ok.getInt32(0) == 0) return null;
+		return addr;
+	}
 }
 
 class RealNetwork extends Network {

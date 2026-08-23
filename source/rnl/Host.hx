@@ -10,6 +10,21 @@ class Host extends HandleWrapper {
 	var _evBuf:Bytes;
 	var _stBuf:Bytes;
 
+	/**
+		Optional per-event handlers (callback-style ergonomics over the polling
+		core). When a handler for the fired event type is set, `service()`
+		invokes it and releases the event automatically (returns null).
+		Without handlers the classic poll pattern applies: service() returns
+		the RnlEvent and you must call eventFree().
+	**/
+	public var onPeerConnect:Null<RnlEvent->Void>;
+	public var onPeerDisconnect:Null<RnlEvent->Void>;
+	public var onPeerApproval:Null<RnlEvent->Void>;
+	public var onPeerDenial:Null<RnlEvent->Void>;
+	public var onPeerBandwidthLimits:Null<RnlEvent->Void>;
+	public var onPeerMtu:Null<RnlEvent->Void>;
+	public var onPeerReceive:Null<RnlEvent->Void>;
+
 	public function new(inst:Instance, network:Network) {
 		super();
 		_evBuf = Bytes.alloc(64);
@@ -49,11 +64,40 @@ class Host extends HandleWrapper {
 		var st = Bytes.alloc(4);
 		Raw.RNL_host_service(h(), Native.data(_evBuf),
 			haxe.Int64.ofInt(timeoutMs), Native.data(st));
-		if (st.getInt32(0) == 3) return new RnlEvent(this, _evBuf);
-		return null;
+		if (st.getInt32(0) != 3) return null;
+		var ev = new RnlEvent(this, _evBuf);
+		var handled = switch (ev.type) {
+			case EventType.PeerConnect:
+				if (onPeerConnect != null) { onPeerConnect(ev); true; } else false;
+			case EventType.PeerDisconnect:
+				if (onPeerDisconnect != null) { onPeerDisconnect(ev); true; } else false;
+			case EventType.PeerApproval:
+				if (onPeerApproval != null) { onPeerApproval(ev); true; } else false;
+			case EventType.PeerDenial:
+				if (onPeerDenial != null) { onPeerDenial(ev); true; } else false;
+			case EventType.PeerBandwidthLimits:
+				if (onPeerBandwidthLimits != null) { onPeerBandwidthLimits(ev); true; } else false;
+			case EventType.PeerMtu:
+				if (onPeerMtu != null) { onPeerMtu(ev); true; } else false;
+			case EventType.PeerReceive:
+				if (onPeerReceive != null) { onPeerReceive(ev); true; } else false;
+			default: false;
+		};
+		if (handled) { eventFree(); return null; }
+		return ev;
 	}
 
 	public function eventFree():Void Raw.RNL_host_event_free(h());
+
+	/** Force pending outgoing datagrams out. Returns ok flag from the library. */
+	public function flush():Bool {
+		var ok = Bytes.alloc(4);
+		RnlError.check(Raw.RNL_host_flush(h(), Native.data(ok)), "Host.flush");
+		return ok.getInt32(0) != 0;
+	}
+
+	/** Wake a host blocked inside service() from another thread. */
+	public function interrupt():Void Raw.RNL_host_interrupt(h());
 
 	public function connect(addr:Address, channels:Int = 1, ?data:Null<haxe.Int64>):Peer {
 		if (data == null) data = haxe.Int64.ofInt(0);

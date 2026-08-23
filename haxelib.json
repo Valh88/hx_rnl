@@ -1,7 +1,7 @@
 
 {
 	"name": "hxrnl",
-	"license": "MIT",
+	"license": "zlib",
 	"tags": ["hxrnl"],
 	"description": "rnl bindings for haxe",
 	"version": "0.1.0",
