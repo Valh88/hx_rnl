@@ -28,6 +28,15 @@ class Host extends HandleWrapper
 	public var onPeerBandwidthLimits:Null<RnlEvent->Void>;
 	public var onPeerMtu:Null<RnlEvent->Void>;
 	public var onPeerReceive:Null<RnlEvent->Void>;
+	/**
+		Token check handlers — currently NON-FUNCTIONAL.
+		The C ABI (RNLDynLib.pas) does not expose the synchronous boolean
+		callback needed for accept/deny decisions. Enabling
+		`checkConnectionTokens` has no effect without a native callback.
+		Requires adding `RNL_host_set_on_check_token_callback` to RNLDynLib.pas.
+	**/
+	public var onPeerCheckConnectionToken:Null<RnlEvent->Bool>;
+	public var onPeerCheckAuthenticationToken:Null<RnlEvent->Bool>;
 
 	public function new(inst:Instance, network:Network)
 	{
@@ -158,6 +167,14 @@ class Host extends HandleWrapper
 					onPeerReceive(ev);
 					true;
 				} else false;
+			case EventType.PeerCheckConnectionToken:
+				if (onPeerCheckConnectionToken != null)
+					onPeerCheckConnectionToken(ev);
+				else false; // never fires: C ABI doesn't expose the callback
+			case EventType.PeerCheckAuthenticationToken:
+				if (onPeerCheckAuthenticationToken != null)
+					onPeerCheckAuthenticationToken(ev);
+				else false;
 			default: false;
 		};
 	}
