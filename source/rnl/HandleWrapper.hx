@@ -23,7 +23,13 @@ class HandleWrapper {
 	public function dispose():Void { disposed = true; }
 
 	/** Get native pointer for this handle */
-	public inline function h():Dynamic {
-		return rnl.raw.Raw.ptrFromI64(_lo, _hi);
+	#if cpp
+	public inline function h():cpp.Star<cpp.Void> {
+		return Native.i64ToPtr(_lo, _hi);
 	}
+	#else
+	public inline function h():Dynamic {
+		return Native.i64ToPtr(_lo, _hi);
+	}
+	#end
 }

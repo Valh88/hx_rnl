@@ -5,7 +5,11 @@ import rnl.raw.Raw;
 class Network extends HandleWrapper {
 	override public function dispose():Void { disposed = true; }
 	function new() { super(); }
+	#if cpp
+	public inline function native():cpp.Star<cpp.Void> return h();
+	#else
 	public inline function native():Dynamic return h();
+	#end
 }
 
 class RealNetwork extends Network {

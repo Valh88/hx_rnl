@@ -19,5 +19,9 @@ class Instance extends HandleWrapper {
 			Native.data(ok), Native.data(chk), Native.data(fail));
 		return ok.getInt32(0) != 0;
 	}
+	#if cpp
+	public inline function native():cpp.Star<cpp.Void> return h();
+	#else
 	public inline function native():Dynamic return h();
+	#end
 }

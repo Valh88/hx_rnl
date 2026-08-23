@@ -49,13 +49,13 @@ class Host extends HandleWrapper {
 		var tok:Dynamic = null;
 		RnlError.check(
 			Raw.RNL_host_connect(h(), addr.native(), channels,
-				data, tok, tok, tok, tok, pb),
+				data, tok, tok, tok, tok, Native.data(pb)),
 			"Host.connect"
 		);
 		return new Peer(this, pb);
 	}
 
 	public function broadcast(channel:Int, data:Bytes):Void {
-		Raw.RNL_host_broadcast_message_data(h(), channel, data, data.length, 0);
+		Raw.RNL_host_broadcast_message_data(h(), channel, Native.data(data), data.length, 0);
 	}
 }

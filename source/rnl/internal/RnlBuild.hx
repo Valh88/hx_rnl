@@ -9,15 +9,16 @@ package rnl.internal;
 @:buildXml('<files id="haxe">
 		<compilerflag value="-I/run/media/vano/9C33-6BBD/projects/pascal/rnl/lib" />
 		<compilerflag value="-include/run/media/vano/9C33-6BBD/projects/pascal/rnl/lib/rnl.h" />
+		<compilerflag value="-fpermissive" />
 	</files>
 	<target id="haxe">
-		<libpath name="${HAXE_LIBS}/hxrnl/ndll/Linux64" if="linux" />
-		<lib name="rnl" if="linux" />
-		<libpath name="${HAXE_LIBS}/hxrnl/ndll/Windows64" if="windows" />
-		<lib name="RNL" if="windows" />
+		<libpath name="/home/vano/.haxe_lib/hxrnl/ndll/Linux64" if="linux" />
+		<lib name="-lrnl" if="linux" />
+		<libpath name="${HAXE_LIBS}/hxrnl/ndll/win64" if="windows" />
+		<lib name="-lRNL" if="windows" />
 		<libpath name="${HAXE_LIBS}/hxrnl/ndll/android-arm64" if="android && HXCPP_ARM64" />
-		<lib name="rnl" if="android && HXCPP_ARM64" />
+		<lib name="-lrnl" if="android && HXCPP_ARM64" />
 		<libpath name="${HAXE_LIBS}/hxrnl/ndll/android-arm" if="android && HXCPP_ARMV7" />
-		<lib name="rnl" if="android && HXCPP_ARMV7" />
+		<lib name="-lrnl" if="android && HXCPP_ARMV7" />
 	</target>')
 class RnlBuild {}

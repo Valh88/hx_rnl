@@ -28,6 +28,6 @@ class Peer extends HandleWrapper {
 	function set_countChannels(v:Int):Int { Raw.RNL_peer_set_count_channels(h(),v); return v; }
 	public function getChannel(i:Int):Null<Channel> {
 		var cb = Bytes.alloc(rnl.raw.Types.PTR_BYTES);
-		return Raw.RNL_peer_get_channel(h(), i, cb) == 0 ? new Channel(cb) : null;
+		return Raw.RNL_peer_get_channel(h(), i, Native.data(cb)) == 0 ? new Channel(cb) : null;
 	}
 }

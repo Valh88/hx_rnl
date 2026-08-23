@@ -12,7 +12,7 @@ class Message {
 	public static function fromData(data:Bytes):Message {
 		var m = new Message(null, null, 0);
 		m._buf = Bytes.alloc(rnl.raw.Types.PTR_BYTES);
-		RnlError.check(Raw.RNL_message_create(Native.data(data), data.length, 0, m._buf));
+		RnlError.check(Raw.RNL_message_create(Native.data(data), data.length, 0, Native.data(m._buf)));
 		return m;
 	}
 	public var length(get,never):Int;
