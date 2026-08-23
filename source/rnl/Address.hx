@@ -33,5 +33,9 @@ class Address {
 		while (len < 63 && buf.get(len) != 0) len++;
 		return buf.getString(0, len);
 	}
+	#if cpp
+	public inline function native():cpp.Star<cpp.Void> return Native.data(_buf);
+	#else
 	public inline function native():Dynamic return Native.data(_buf);
+	#end
 }

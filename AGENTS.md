@@ -46,13 +46,23 @@ haxe -cp ../source -main Main --hl bin/hl/Main.hl           # hl bytecode
 
 ## hxcpp linking gotcha
 
-Libraries go inside `<target id="haxe">`, NOT `<files id="haxe">`. Include the `-l` prefix:
+Libraries go inside `<target id="haxe">`, NOT `<files id="haxe">`. Include the `-l` prefix — hxcpp passes `<lib name>` verbatim to the linker (bare `rnl` fails, `-lrnl` works):
 ```xml
 <target id="haxe">
     <libpath name="/path/to/dir/containing/librnl.so" />
     <lib name="-lrnl" />
 </target>
 ```
+The `libpath` in `RnlBuild.hx` is hardcoded — adjust it when the checkout moves.
+
+## hxcpp FFI rules (hard-won)
+
+- **Never box native handles through `Dynamic` on cpp** — handle values can be lost. `HandleWrapper.h()` and `*.native()` return `cpp.Star<cpp.Void>` on cpp (`Dynamic` elsewhere). Keep it that way.
+- **Every `Bytes` argument passed to a Raw function must go through `Native.data()` / `Native.charData()`**. On hl raw `Bytes` coerces implicitly; on cpp it does not compile and silently-reverted edits here break the build.
+- `-fpermissive` compiler flag is required (`RnlBuild.hx`): the C API uses typed output params (`void**`, `int32_t*`, `size_t*`) but Haxe externs declare all pointers as `Ptr` (`void*`). Without the flag these become hard errors.
+- Struct-by-value params (`const struct rnl_address`) cannot be called through the externs at all — `Address.hx` uses `untyped __cpp__('RNL_...(*(struct rnl_address*){0}->b->GetBase())', _buf)` under `#if cpp` for those calls.
+- `Native.data()`/`charData()` use `__cpp__('(void*){0}->b->GetBase()', b)` because `b.getData()` returns an hxcpp Array object, not a pointer.
+- Deprecation warnings about `Int64.getLow/getHigh` in generated code are harmless; new code should use `.low`/`.high`.
 
 ## Runtime deps
 

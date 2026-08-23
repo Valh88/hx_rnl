@@ -13,7 +13,7 @@ class Random {
 	}
 	public function getBytes(n:Int):Bytes {
 		var out = Bytes.alloc(n);
-		RnlError.check(Raw.RNL_random_get_bytes(Native.data(_h), out, n));
+		RnlError.check(Raw.RNL_random_get_bytes(Native.data(_h), Native.data(out), n));
 		return out;
 	}
 	public function getU32():Int return Raw.RNL_random_get_u32(Native.data(_h));
