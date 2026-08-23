@@ -79,3 +79,37 @@ class InterferenceNetwork extends Network {
 		Raw.RNL_network_interference_set_simulated_factor(h(), outgoing ? 1 : 0, v);
 	}
 }
+
+/**
+ * TURN relay network decorator (RFC 8656).
+ * Wraps an underlying network; hosts created on this network route traffic
+ * through the TURN server. transport: 0=UDP, 1=TCP, 2=DTLS.
+ */
+@:headerCode('#include "rnl.h"')
+class TurnNetwork extends Network {
+	public function new(inst:Instance, underlying:Network,
+	                    serverAddr:Address, username:String, password:String) {
+		super();
+		var u = Bytes.ofString(username);
+		var p = Bytes.ofString(password);
+		var tmp = Bytes.alloc(8);
+		RnlError.check(Raw.RNL_turn_network_create(
+			inst.native(), underlying.native(),
+			serverAddr.native(),
+			Native.charData(u), u.length,
+			Native.charData(p), p.length,
+			Native.data(tmp)), "TurnNetwork.create");
+		readHandle(tmp);
+	}
+	override public function dispose():Void {
+		if (!disposed) { Raw.RNL_turn_network_destroy(h()); disposed = true; }
+		super.dispose();
+	}
+
+	/** transport: 0=UDP, 1=TCP, 2=DTLS */
+	public function setTransport(v:Int):Void Raw.RNL_turn_network_set_transport(h(), v);
+	public function setDtlsVersion(v:Int):Void Raw.RNL_turn_network_set_dtls_version(h(), v);
+
+	public var transport(get,never):Int;
+	function get_transport():Int return Raw.RNL_turn_network_get_transport(h());
+}

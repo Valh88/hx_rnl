@@ -9,3 +9,5 @@
 -hl bin/hl/Main.hl
 --next
 -cpp bin/cpp
+
+# haxelib run formatter -s src

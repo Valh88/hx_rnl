@@ -91,10 +91,18 @@ dispatchers over the polling core, NOT C function-pointer callbacks — the raw
 from Haxe closures needs per-target trampolines (deferred).
 
 Also wrapped: `Host.flush()/interrupt()`, `Network.resolveHost(name, family)`
-(DNS through the network's resolver, RealNetwork only). Still raw-only:
-STUN queries (struct-by-value arg), NAT candidates/gather/punch,
-Discovery, TURN relay, DTLS clients, Compressors, crypto helpers,
-Host certificate API.
+(DNS through the network's resolver, RealNetwork only), `Compressor` (Deflate /
+LZBRRC / BRRC roundtrip), `Crypto` utility class (base64 encode/decode,
+hash32, SHA-256/512/1, MD5, HMAC, HKDF extract/expand, ChaCha20-Poly1305 AEAD
+encrypt/decrypt, X25519 keygen + shared secret, Ed25519 sign/verify, secure
+comparison), `Stun` (begin/take query pattern via host) + `NatPredict`
+(hole punching viability), `DiscoveryClient` (LAN one-shot browse) +
+`DiscoveryServer`, `TurnNetwork` (RFC 8656 relay decorator extending
+`Network`), `DtlsVerification` + `Dtls12Client` (DTLS transport security),
+`Certificate` (issue/isAbsent/x509 hostname match) + Host certificate API
+(`setCertificate/clearCertificate/addCertificateAuthorityKey/
+verifyCertificate`). Still raw-only: TURN allocation management,
+DTLS 1.3 client, STUN message builder/parser.
 
 ## Debugging workflow
 

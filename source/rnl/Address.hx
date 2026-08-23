@@ -12,6 +12,22 @@ class Address {
 		RnlError.check(Raw.RNL_address_from_string(Native.charData(sb), sb.length, Native.data(a._buf)), 'Address.parse');
 		return a;
 	}
+
+	/** Construct from 4 octets (IPv4). */
+	public static function fromIPv4(a:Int, b:Int, c:Int, d:Int):Address {
+		var addr = new Address();
+		addr.setOctet(0, a); addr.setOctet(1, b); addr.setOctet(2, c); addr.setOctet(3, d);
+		// set v4-mapped prefix bytes 10-11 to 0xFF
+		addr.setOctet(10, 0xFF); addr.setOctet(11, 0xFF);
+		return addr;
+	}
+
+	function setOctet(i:Int, v:Int):Void _buf.set(i, v & 0xFF);
+
+	/** Copy 22-byte address data from src at offset into this address. */
+	public function copyFrom(src:Bytes, offset:Int):Void {
+		_buf.blit(0, src, offset, 22);
+	}
 	public var port(get,set):Int;
 	function get_port():Int return _buf.getUInt16(20);
 	function set_port(v:Int):Int { _buf.setUInt16(20,v); return v; }

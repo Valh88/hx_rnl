@@ -100,6 +100,31 @@ class Host extends HandleWrapper {
 	/** Wake a host blocked inside service() from another thread. */
 	public function interrupt():Void Raw.RNL_host_interrupt(h());
 
+	// ------------------------------------------------------ certificates
+
+	/** Install this host's Ed25519 certificate (104 bytes). */
+	public function setCertificate(cert:Bytes):Void
+		RnlError.check(Raw.RNL_host_set_certificate(h(), Native.data(cert)), "Host.setCertificate");
+
+	public function clearCertificate():Void Raw.RNL_host_clear_certificate(h());
+
+	/** Add a trusted certificate authority public key (32 bytes). */
+	public function addCertificateAuthorityKey(key:Bytes):Void
+		RnlError.check(Raw.RNL_host_add_certificate_authority_public_key(h(), Native.data(key)), "Host.addCA");
+
+	public function clearCertificateAuthorityKeys():Void
+		Raw.RNL_host_clear_certificate_authority_public_keys(h());
+
+	/** Verify a peer's certificate against known CA keys. */
+	public function verifyCertificate(cert:Bytes, longTermPubKey:Bytes, ?expectedSubject:Bytes):CertVerdict {
+		var verdict = Bytes.alloc(4);
+		Raw.RNL_host_verify_certificate(h(),
+			Native.data(cert), Native.data(longTermPubKey),
+			expectedSubject != null ? Native.data(expectedSubject) : null,
+			Native.data(verdict));
+		return cast verdict.getInt32(0);
+	}
+
 	public function connect(addr:Address, channels:Int = 1, ?data:Null<haxe.Int64>):Peer {
 		if (data == null) data = haxe.Int64.ofInt(0);
 		var pb = Bytes.alloc(8);

@@ -10,6 +10,8 @@ import rnl.Address;
 import rnl.Peer;
 import rnl.Channel;
 import rnl.RnlEvent;
+import rnl.Compressor;
+import rnl.Crypto;
 import rnl.Enums.WorkMode;
 import rnl.Enums.ChannelType;
 import rnl.Enums.EventType;
@@ -39,6 +41,7 @@ class Main {
 		testDisconnectData();
 		testHostConfig();
 		testHandlersFlushDns();
+		testCompressor();
 		trace(failures == 0 ? 'ALL TESTS PASS' : 'FAILURES: $failures');
 		if (failures > 0) Sys.exit(1);
 	}
@@ -310,6 +313,22 @@ class Main {
 		var mtuStr = approved ? Std.string(peer.mtu) : "n/a";
 		ok(name, okCond && (!approved || mtuOk),
 			'${detail.join(" ")}, approved=$approved, peer mtu=$mtuStr');
+	}
+
+	// ---------------------------------------------------------- 8 compressor
+
+	static function testCompressor() {
+		var name = "compressor";
+		var c = new Compressor(Deflate);
+		// repetitive data compresses well
+		var original = haxe.io.Bytes.alloc(2048);
+		for (i in 0...2048) original.set(i, (i % 7 == 0) ? 0xAA : 0x00);
+		var compressed = c.compress(original);
+		var decompressed = c.decompress(compressed, original.length);
+		var roundtrip = decompressed.length == original.length
+			&& Crypto.secureEquals(original, decompressed);
+		c.dispose();
+		ok(name, roundtrip, '${original.length}B -> ${compressed.length}B -> ${decompressed.length}B (${Std.int(compressed.length * 100 / original.length)}%)');
 	}
 
 	// ------------------------------------------- 7 handlers / flush / dns
