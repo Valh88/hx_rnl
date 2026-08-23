@@ -58,11 +58,29 @@ The `libpath` in `RnlBuild.hx` is hardcoded — adjust it when the checkout move
 ## hxcpp FFI rules (hard-won)
 
 - **Never box native handles through `Dynamic` on cpp** — handle values can be lost. `HandleWrapper.h()` and `*.native()` return `cpp.Star<cpp.Void>` on cpp (`Dynamic` elsewhere). Keep it that way.
+- **Two kinds of handle args — know which one you're calling:**
+  - `T *out` (create functions): pass the buffer itself → `Native.data(buf)`.
+  - handle by value (use/destroy functions): reconstruct via lo/hi → `Native.i64ToPtr(lo, hi)` / `h()`. Passing `Native.data(handleBuf)` here silently corrupts the call (getters return neutral 0, payload reads segfault). `Message`/`Random` store lo/hi and use `h()` for this reason.
 - **Every `Bytes` argument passed to a Raw function must go through `Native.data()` / `Native.charData()`**. On hl raw `Bytes` coerces implicitly; on cpp it does not compile and silently-reverted edits here break the build.
 - `-fpermissive` compiler flag is required (`RnlBuild.hx`): the C API uses typed output params (`void**`, `int32_t*`, `size_t*`) but Haxe externs declare all pointers as `Ptr` (`void*`). Without the flag these become hard errors.
 - Struct-by-value params (`const struct rnl_address`) cannot be called through the externs at all — `Address.hx` uses `untyped __cpp__('RNL_...(*(struct rnl_address*){0}->b->GetBase())', _buf)` under `#if cpp` for those calls.
 - `Native.data()`/`charData()` use `__cpp__('(void*){0}->b->GetBase()', b)` because `b.getData()` returns an hxcpp Array object, not a pointer.
-- Deprecation warnings about `Int64.getLow/getHigh` in generated code are harmless; new code should use `.low`/`.high`.
+
+## RnlEvent wire layout (verified by byte-dump)
+
+`struct rnl_event` is packed exactly as rnl.h declares; offsets on 64-bit:
+`type@0(i32) peer@4 msg@12 ch@20(u8) data@21(u64) denial@29(i32) mtu@33(u16)`.
+Don't "fix" these to aligned offsets — the Pascal side writes them packed.
+Event messages are borrowed: `Message` ctor takes its own `inc_ref`, `dispose()`
+does `dec_ref`. Reading payload without inc_ref works only before eventFree.
+
+## Debugging workflow
+
+1. `haxe --no-output` passing ≠ working: C++/runtime failures come later.
+2. Hex-dump the raw event buffer (`-D rnl-event-dump`) when fields look wrong.
+3. Reproduce suspicious sequences in a plain C program first — if C works and
+   Haxe doesn't, it's a binding bug (usually Dynamic boxing or buffer-vs-handle).
+4. Test iteration order: hl (fastest compile) → hlc → cpp.
 
 ## Runtime deps
 

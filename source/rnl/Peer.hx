@@ -15,6 +15,11 @@ class Peer extends HandleWrapper {
 	}
 	public function incRef():Void Raw.RNL_peer_inc_ref(h());
 	public function decRef():Void Raw.RNL_peer_dec_ref(h());
+	/** Graceful disconnect; data is delivered to the remote PeerDisconnect event. */
+	public function disconnect(?data:haxe.Int64, delayed:Bool = false):Void {
+		if (data == null) data = haxe.Int64.ofInt(0);
+		Raw.RNL_peer_disconnect(h(), data, delayed ? 1 : 0);
+	}
 	public var localPeerId(get,never):Int;
 	function get_localPeerId():Int return Raw.RNL_peer_get_local_peer_id(h());
 	public var remotePeerId(get,never):Int;

@@ -37,3 +37,26 @@ class VirtualNetwork extends Network {
 		super.dispose();
 	}
 }
+
+/** Fault-injecting decorator over another network.
+ *  Simulates loss/duplication/reordering/latency/jitter. */
+class InterferenceNetwork extends Network {
+	public function new(inst:Instance, underlying:Network) {
+		super();
+		var tmp = Bytes.alloc(8);
+		RnlError.check(
+			Raw.RNL_network_interference_create(inst.native(), underlying.native(), Native.data(tmp)),
+			"InterferenceNetwork"
+		);
+		readHandle(tmp);
+	}
+	override public function dispose():Void {
+		if (!disposed) { Raw.RNL_network_interference_destroy(h()); disposed = true; }
+		super.dispose();
+	}
+	/** probability 0..1; outgoing=true affects packets we send. */
+	public function setLoss(probability:Float, outgoing:Bool = true):Void {
+		var v = Std.int(Math.min(1, Math.max(0, probability)) * 4294967296.0);
+		Raw.RNL_network_interference_set_simulated_factor(h(), outgoing ? 1 : 0, v);
+	}
+}

@@ -11,6 +11,8 @@ class Native {
 	public static inline function charData(b:Bytes):hl.Bytes return b.getData();
 	public static inline function i64ToPtr(lo:Int, hi:Int):hl.Bytes
 		return rnl.raw.Raw.ptrFromI64(lo, hi);
+	public static inline function readPtr(p:hl.Bytes, len:Int):Bytes
+		return untyped new haxe.io.Bytes(p, len);
 	#elseif cpp
 	public static inline function data(b:Bytes):cpp.Star<cpp.Void>
 		return untyped __cpp__('(void*){0}->b->GetBase()', b);
@@ -18,6 +20,11 @@ class Native {
 		return untyped __cpp__('(void*){0}->b->GetBase()', b);
 	public static inline function i64ToPtr(lo:Int, hi:Int):cpp.Star<cpp.Void>
 		return untyped __cpp__('(void*)(uintptr_t)((uint64_t)(uint32_t){1} << 32 | (uint32_t){0})', lo, hi);
+	public static inline function readPtr(p:cpp.Star<cpp.Void>, len:Int):Bytes {
+		var b = Bytes.alloc(len);
+		if (len > 0) untyped __cpp__('memcpy({0}->b->GetBase(), {1}, {2})', b, p, len);
+		return b;
+	}
 	#end
 
 	public static inline function mkI64(lo:Int, hi:Int):Int64 return Int64.make(hi, lo);

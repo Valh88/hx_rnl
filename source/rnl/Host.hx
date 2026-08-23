@@ -2,6 +2,7 @@ package rnl;
 import haxe.io.Bytes;
 import rnl.raw.Raw;
 import rnl.Enums.WorkMode;
+import rnl.Enums.ChannelType;
 import rnl.Enums.EventType;
 
 class Host extends HandleWrapper {
@@ -31,6 +32,16 @@ class Host extends HandleWrapper {
 
 	public function start(mode:WorkMode):Void {
 		RnlError.check(Raw.RNL_host_start(h(), cast mode), "Host.start");
+	}
+
+	/** Configure delivery type of channel slot i (before peers connect). */
+	public function setChannelType(i:Int, t:ChannelType):Void {
+		RnlError.check(Raw.RNL_host_set_channel_type(h(), i, cast t), 'Host.setChannelType($i)');
+	}
+	public function getChannelType(i:Int):ChannelType {
+		var out = Bytes.alloc(4);
+		RnlError.check(Raw.RNL_host_get_channel_type(h(), i, Native.data(out)), 'Host.getChannelType($i)');
+		return cast out.getInt32(0);
 	}
 
 	public function service(timeoutMs:Int):Null<RnlEvent> {
