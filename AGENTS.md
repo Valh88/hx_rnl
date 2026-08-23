@@ -107,15 +107,36 @@ dispatchers over the polling core, NOT C function-pointer callbacks — the raw
 `RNL_host_set_on_*` API stays unwrapped because passing real C fn pointers
 from Haxe closures needs per-target trampolines (deferred).
 
-**Token check events (types 1/2):** `RNLDynLib.pas` now exports
-`RNL_host_set_on_check_token_callback` with `rnl_cb_check_token` typedef.
-Use `host.enableTokenCheck()` to enable synchronous accept-all checking at
-the C level (DDoS amplification protection). Fine-grained per-token decisions:
-use `onPeerConnect` + `peer.disconnect()` post-handshake. The Haxe-side
-`onPeerCheckConnectionToken/AuthenticationToken` handler fields exist but are
-advisory — the synchronous C callback already decided before the event fires.
-Custom C-level callbacks require passing a real function pointer through FFI
-(cpp: lambda via `__cpp__`; hl: needs hdll trampoline prim — deferred).
+**Token check callbacks (types 1/2):** fully implemented on all targets.
+`RNLDynLib.pas` exports `RNL_host_set_on_check_token_callback` with
+`rnl_cb_check_token` typedef. Three usage levels:
+
+```haxe
+// 1. Accept-all (DDoS protection — garbage filtered before crypto handshake):
+srv.enableTokenCheck();
+
+// 2. Custom per-token decision from Haxe:
+srv.setCustomTokenCallback(function(kind:Int):Bool {
+    // kind: 1=connection token, 2=authentication token
+    return kind == 1; // accept connection tokens, reject auth tokens
+});
+srv.checkConnectionTokens = true;
+srv.checkAuthenticationTokens = true;
+
+// 3. Disable entirely (default state — tokens not checked):
+srv.disableTokenCheck();
+```
+
+Implementation: on **cpp** a `hx::Object*` stores the Haxe closure; a static
+C++ trampoline calls it via `::Dynamic fn(kind)` during handshake. On **hl**
+a generated prim (`set_custom_token_check`) in `rnl_hdll.c` stores a
+`vclosure*` and dispatches via `hl_dyn_call`. The callback receives only
+`kind:Int` for simplicity; full addr/token data requires deeper FFI marshalling.
+
+The Haxe-side `onPeerCheckConnectionToken/AuthenticationToken` handler fields
+exist but are advisory — the synchronous C callback already decided before
+the event reaches the queue. Use `onPeerConnect` + `peer.disconnect()` for
+post-connect business logic (bans, subscriptions).
 
 Also wrapped: `Host.flush()/interrupt()`, `Network.resolveHost(name, family)`
 (DNS through the network's resolver, RealNetwork only), `Compressor` (Deflate /
