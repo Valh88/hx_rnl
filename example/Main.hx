@@ -392,7 +392,8 @@ class Main
 
 	// -------------------------------------------------------- 9 token check
 
-	static function testTokenCheck() {
+	static function testTokenCheck()
+	{
 		var name = "tokens";
 		var p = makePair();
 
@@ -407,13 +408,12 @@ class Main
 		var connectData = haxe.Int64.ofInt(0);
 		var srvSawConnect = false;
 
-		pump(p, 4000,
-			function(ev) if (ev.type == EventType.PeerConnect) {
-				srvSawConnect = true;
-				connectData = ev.data;
-			},
-			function(ev) if (ev.type == EventType.PeerApproval) approved = true,
-			function() return approved && srvSawConnect);
+		pump(p, 4000, function(ev) if (ev.type == EventType.PeerConnect)
+		{
+			srvSawConnect = true;
+			connectData = ev.data;
+		}, function(ev) if (ev.type == EventType.PeerApproval)
+				approved = true, function() return approved && srvSawConnect);
 
 		// connection should succeed (accept-all C callback)
 		// and server should see the client's data (0xAB)
@@ -422,8 +422,7 @@ class Main
 		// disable token check for cleanup
 		p.srv.disableTokenCheck();
 
-		ok(name, flagsOk && approved && dataOk,
-			'flags=$flagsOk approved=$approved srvConnect=$srvSawConnect data=${connectData.low}');
+		ok(name, flagsOk && approved && dataOk, 'flags=$flagsOk approved=$approved srvConnect=$srvSawConnect data=${connectData.low}');
 	}
 
 	// ------------------------------------------- 7 handlers / flush / dns

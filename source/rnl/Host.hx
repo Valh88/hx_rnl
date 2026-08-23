@@ -29,6 +29,7 @@ class Host extends HandleWrapper
 	public var onPeerBandwidthLimits:Null<RnlEvent->Void>;
 	public var onPeerMtu:Null<RnlEvent->Void>;
 	public var onPeerReceive:Null<RnlEvent->Void>;
+
 	/**
 		Token check handlers — called for CHECK_TOKEN events (types 1/2).
 		Requires `enableTokenCheck()` to be called first (sets up C callback).
@@ -37,6 +38,7 @@ class Host extends HandleWrapper
 		disconnect() for post-connect rejection.
 	**/
 	public var onPeerCheckConnectionToken:Null<RnlEvent->Bool>;
+
 	public var onPeerCheckAuthenticationToken:Null<RnlEvent->Bool>;
 
 	public function new(inst:Instance, network:Network)
@@ -169,13 +171,9 @@ class Host extends HandleWrapper
 					true;
 				} else false;
 			case EventType.PeerCheckConnectionToken:
-				if (onPeerCheckConnectionToken != null)
-					onPeerCheckConnectionToken(ev);
-				else false; // never fires: C ABI doesn't expose the callback
+				if (onPeerCheckConnectionToken != null) onPeerCheckConnectionToken(ev); else false; // never fires: C ABI doesn't expose the callback
 			case EventType.PeerCheckAuthenticationToken:
-				if (onPeerCheckAuthenticationToken != null)
-					onPeerCheckAuthenticationToken(ev);
-				else false;
+				if (onPeerCheckAuthenticationToken != null) onPeerCheckAuthenticationToken(ev); else false;
 			default: false;
 		};
 	}
@@ -203,7 +201,8 @@ class Host extends HandleWrapper
 		`onPeerConnect` handler (check `ev.data`, call `peer.disconnect()` if bad).
 		This provides DDoS amplification protection at the protocol level.
 	**/
-	public function enableTokenCheck():Void {
+	public function enableTokenCheck():Void
+	{
 		checkConnectionTokens = true;
 		checkAuthenticationTokens = true;
 		#if cpp
@@ -215,7 +214,8 @@ class Host extends HandleWrapper
 	}
 
 	/** Disable token checking and remove the callback. */
-	public function disableTokenCheck():Void {
+	public function disableTokenCheck():Void
+	{
 		checkConnectionTokens = false;
 		checkAuthenticationTokens = false;
 		#if cpp
@@ -877,7 +877,8 @@ class Host extends HandleWrapper
 
 #if hl
 @:hlNative("rnl")
-private extern class TokenCheckPrims {
+private extern class TokenCheckPrims
+{
 	static function set_token_check_accept_all(host:hl.Bytes):Void;
 	static function set_token_check_deny_all(host:hl.Bytes):Void;
 	static function set_token_check_off(host:hl.Bytes):Void;
