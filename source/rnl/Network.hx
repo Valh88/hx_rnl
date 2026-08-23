@@ -2,6 +2,7 @@ package rnl;
 import haxe.io.Bytes;
 import rnl.raw.Raw;
 
+@:headerCode('#include "rnl.h"')
 class Network extends HandleWrapper {
 	override public function dispose():Void { disposed = true; }
 	function new() { super(); }
@@ -27,6 +28,7 @@ class Network extends HandleWrapper {
 	}
 }
 
+@:headerCode('#include "rnl.h"')
 class RealNetwork extends Network {
 	public function new(inst:Instance) {
 		super();
@@ -40,6 +42,7 @@ class RealNetwork extends Network {
 	}
 }
 
+@:headerCode('#include "rnl.h"')
 class VirtualNetwork extends Network {
 	public function new(inst:Instance) {
 		super();
@@ -55,6 +58,7 @@ class VirtualNetwork extends Network {
 
 /** Fault-injecting decorator over another network.
  *  Simulates loss/duplication/reordering/latency/jitter. */
+@:headerCode('#include "rnl.h"')
 class InterferenceNetwork extends Network {
 	public function new(inst:Instance, underlying:Network) {
 		super();

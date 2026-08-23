@@ -6,6 +6,7 @@ import rnl.Enums.ChannelType;
 import rnl.Enums.CertVerdict;
 import rnl.Enums.EventType;
 
+@:headerCode('#include "rnl.h"')
 class Host extends HandleWrapper {
 	var _evBuf:Bytes;
 	var _stBuf:Bytes;

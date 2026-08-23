@@ -2,6 +2,7 @@ package rnl;
 import haxe.io.Bytes;
 import rnl.raw.Raw;
 
+@:headerCode('#include "rnl.h"')
 class Address {
 	var _buf:Bytes;
 	public function new() { _buf = Bytes.alloc(22); }

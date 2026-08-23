@@ -3,6 +3,7 @@ import haxe.io.Bytes;
 import rnl.raw.Raw;
 import rnl.Enums.TranscriptBinding;
 
+@:headerCode('#include "rnl.h"')
 class Peer extends HandleWrapper {
 	public function new(host:Host, buf:Bytes, offset:Int = 0) {
 		super();

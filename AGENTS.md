@@ -111,4 +111,25 @@ Host certificate API.
 
 ## External dependency
 
-The library header lives at `../lib/rnl.h` and prebuilt binaries at `../lib/bin/`. The `RnlBuild.hx` file hardcodes the path to `../lib` for the include flag — adjust if the repo layout changes.
+The library header lives at `../lib/rnl.h` upstream; a synced copy ships inside
+the package at `include/rnl.h`. All build paths resolve through
+`${haxelib:hxrnl}` in `RnlBuild.hx` — hxcpp asks haxelib for the package root,
+so no machine-specific paths exist. Requirement: register the checkout once:
+
+    cd hx_rnl && haxelib dev hxrnl .
+
+After changing `RnlBuild.hx` compiler flags, delete `example/bin/cpp` — hxcpp's
+precompiled header does not always invalidate on flag changes (nondeterministic
+"no declaration for RNL_*" errors in random TUs). Wrapper classes carry their
+own `@:headerCode('#include "rnl.h"')` so declarations travel with each class's
+generated header regardless of PCH.
+
+## Regenerating bindings
+
+When `../lib/rnl.h` changes:
+
+    python3 tools/gen_raw.py ../lib/rnl.h
+    cp ../lib/rnl.h include/rnl.h
+
+This regenerates `Raw.hx`, `RawUnavailable.hx` and `rnl_hdll.c`; recompile the
+hdll after, and keep the packaged header copy in sync.

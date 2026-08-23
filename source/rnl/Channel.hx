@@ -2,6 +2,7 @@ package rnl;
 import haxe.io.Bytes;
 import rnl.raw.Raw;
 
+@:headerCode('#include "rnl.h"')
 class Channel extends HandleWrapper {
 	public function new(buf:Bytes) {
 		super();
