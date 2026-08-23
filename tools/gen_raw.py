@@ -152,7 +152,7 @@ for ret, name, args in entries:
     fa = ', '.join(final)
     if is_i64(ret):
         A('\tpublic static function %s(%s):Int64 {' % (name, ', '.join(params)))
-        A('\t\treturn _mk(_HlPrim.%s_hi(%s), _HlPrim.%s_lo(%s));' % (name, fa, name, fa))
+        A('\t\treturn _mk(_HlPrim.%s_lo(%s), _HlPrim.%s_hi(%s));' % (name, fa, name, fa))
         A('\t}')
     else:
         hret = hl_hx_type(ret)

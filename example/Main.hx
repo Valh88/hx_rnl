@@ -36,6 +36,7 @@ class Main {
 		testLossSimulation();
 		testFragmentation();
 		testDisconnectData();
+		testHostConfig();
 		trace(failures == 0 ? 'ALL TESTS PASS' : 'FAILURES: $failures');
 		if (failures > 0) Sys.exit(1);
 	}
@@ -257,6 +258,49 @@ class Main {
 			},
 			function() return srvGotData);
 
-		ok(name, srvGotData && hasValue, 'server saw disconnect with data=777: $srvGotData');
+		ok(name, srvGotData && hasValue, 'server saw disconnect with sentinel data: $srvGotData');
+	}
+
+	// ------------------------------------------------------------ 6 host config
+
+	static function testHostConfig() {
+		var name = "config";
+		var p = makePair();
+		var srv = p.srv;
+		var cli = p.cli;
+
+		srv.incomingBandwidthLimit = 64000;
+		srv.outgoingBandwidthLimit = 128000;
+		srv.congestionControl = true;
+		srv.maximumCountPeers = 32;
+		// protocol id must match on both sides or connections are denied:
+		srv.protocolId = haxe.Int64.make(0, 1234);
+		cli.protocolId = haxe.Int64.make(0, 1234);
+
+		var checks = [
+			{n:"incoming", ok:srv.incomingBandwidthLimit == 64000},
+			{n:"outgoing", ok:srv.outgoingBandwidthLimit == 128000},
+			{n:"congestion", ok:srv.congestionControl == true},
+			{n:"maxPeers", ok:srv.maximumCountPeers == 32},
+			{n:"protocolId", ok:srv.protocolId.low == 1234},
+		];
+		var okCond = true;
+		var detail = [];
+		for (c in checks) { okCond = okCond && c.ok; detail.push('${c.n}=${c.ok}'); }
+
+		var peer = p.cli.connect(p.addr, 1, haxe.Int64.ofInt(0));
+		var approved = false;
+		pump(p, 4000,
+			function(ev) {},
+			function(ev) if (ev.type == EventType.PeerApproval) approved = true,
+			function() return approved);
+		var mtuOk = false;
+		if (approved) {
+			pump(p, 2000, function(ev) {}, function(ev) {}, function() return false);
+			mtuOk = peer.mtu > 0 && peer.localPeerId >= 0;
+		}
+		var mtuStr = approved ? Std.string(peer.mtu) : "n/a";
+		ok(name, okCond && (!approved || mtuOk),
+			'${detail.join(" ")}, approved=$approved, peer mtu=$mtuStr');
 	}
 }

@@ -74,6 +74,15 @@ Don't "fix" these to aligned offsets — the Pascal side writes them packed.
 Event messages are borrowed: `Message` ctor takes its own `inc_ref`, `dispose()`
 does `dec_ref`. Reading payload without inc_ref works only before eventFree.
 
+## OOP layer coverage
+
+`source/rnl/*.hx` mirrors the Pascal `TRNL*` classes in Haxe style (camelCase
+properties, enum abstracts, exceptions instead of status codes). Host exposes
+~90 config/statistics properties, Peer ~25 telemetry properties — all generated
+from the `RNL_host/peer_get_*/set_*` pairs. Not wrapped yet (use `Raw.*`):
+STUN client, Discovery, TURN relay, DTLS clients, Compressors, crypto helpers,
+Host certificate API, NAT candidate gathering.
+
 ## Debugging workflow
 
 1. `haxe --no-output` passing ≠ working: C++/runtime failures come later.

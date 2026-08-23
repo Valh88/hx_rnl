@@ -597,7 +597,7 @@ class Raw {
 		return _HlPrim.RNL_random_get_u32(a_random);
 	}
 	public static function RNL_random_get_u64(a_random:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_random_get_u64_hi(a_random), _HlPrim.RNL_random_get_u64_lo(a_random));
+		return _mk(_HlPrim.RNL_random_get_u64_lo(a_random), _HlPrim.RNL_random_get_u64_hi(a_random));
 	}
 	public static function RNL_random_get_bounded_u32(a_random:hl.Bytes, a_bound:Int):Int {
 		return _HlPrim.RNL_random_get_bounded_u32(a_random, a_bound);
@@ -750,7 +750,7 @@ class Raw {
 		return _HlPrim.RNL_chacha20_stream(a_context, a_output, a_text_size);
 	}
 	public static function RNL_chacha20_get_counter(a_context:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_chacha20_get_counter_hi(a_context), _HlPrim.RNL_chacha20_get_counter_lo(a_context));
+		return _mk(_HlPrim.RNL_chacha20_get_counter_lo(a_context), _HlPrim.RNL_chacha20_get_counter_hi(a_context));
 	}
 	public static function RNL_chacha20_set_counter(a_context:hl.Bytes, a_counter:Int64):Int {
 		return _HlPrim.RNL_chacha20_set_counter(a_context, _low(a_counter), _high(a_counter));
@@ -1305,79 +1305,79 @@ class Raw {
 		return _HlPrim.RNL_host_set_check_authentication_tokens(a_host, a_value);
 	}
 	public static function RNL_host_get_protocol_id(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_protocol_id_hi(a_host), _HlPrim.RNL_host_get_protocol_id_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_protocol_id_lo(a_host), _HlPrim.RNL_host_get_protocol_id_hi(a_host));
 	}
 	public static function RNL_host_set_protocol_id(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_protocol_id(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_connection_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_connection_send_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_send_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_send_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_send_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_send_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_send_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_send_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_connection_salt_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_salt_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_salt_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_salt_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_salt_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_salt_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_salt_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_connection_short_term_key_pair_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_short_term_key_pair_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_short_term_key_pair_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_short_term_key_pair_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_short_term_key_pair_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_short_term_key_pair_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_short_term_key_pair_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_connection_challenge_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_challenge_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_challenge_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_challenge_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_challenge_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_challenge_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_challenge_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_connection_nonce_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_nonce_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_nonce_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_nonce_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_nonce_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_nonce_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_nonce_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_disconnection_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_disconnection_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_disconnection_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_disconnection_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_disconnection_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_disconnection_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_disconnection_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_pending_disconnection_send_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_disconnection_send_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_disconnection_send_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_disconnection_send_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_disconnection_send_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_disconnection_send_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_disconnection_send_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_minimum_retransmission_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_minimum_retransmission_timeout_hi(a_host), _HlPrim.RNL_host_get_minimum_retransmission_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_minimum_retransmission_timeout_lo(a_host), _HlPrim.RNL_host_get_minimum_retransmission_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_minimum_retransmission_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_minimum_retransmission_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_maximum_retransmission_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_maximum_retransmission_timeout_hi(a_host), _HlPrim.RNL_host_get_maximum_retransmission_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_maximum_retransmission_timeout_lo(a_host), _HlPrim.RNL_host_get_maximum_retransmission_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_maximum_retransmission_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_maximum_retransmission_timeout(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_minimum_retransmission_timeout_limit(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_minimum_retransmission_timeout_limit_hi(a_host), _HlPrim.RNL_host_get_minimum_retransmission_timeout_limit_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_minimum_retransmission_timeout_limit_lo(a_host), _HlPrim.RNL_host_get_minimum_retransmission_timeout_limit_hi(a_host));
 	}
 	public static function RNL_host_set_minimum_retransmission_timeout_limit(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_minimum_retransmission_timeout_limit(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_maximum_retransmission_timeout_limit(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_maximum_retransmission_timeout_limit_hi(a_host), _HlPrim.RNL_host_get_maximum_retransmission_timeout_limit_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_maximum_retransmission_timeout_limit_lo(a_host), _HlPrim.RNL_host_get_maximum_retransmission_timeout_limit_hi(a_host));
 	}
 	public static function RNL_host_set_maximum_retransmission_timeout_limit(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_maximum_retransmission_timeout_limit(a_host, _low(a_value), _high(a_value));
@@ -1413,7 +1413,7 @@ class Raw {
 		return _HlPrim.RNL_host_set_transcript_binding_mode(a_host, a_value);
 	}
 	public static function RNL_host_get_pending_connection_protocol_fallback_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_pending_connection_protocol_fallback_timeout_hi(a_host), _HlPrim.RNL_host_get_pending_connection_protocol_fallback_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_pending_connection_protocol_fallback_timeout_lo(a_host), _HlPrim.RNL_host_get_pending_connection_protocol_fallback_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_pending_connection_protocol_fallback_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_pending_connection_protocol_fallback_timeout(a_host, _low(a_value), _high(a_value));
@@ -1431,31 +1431,31 @@ class Raw {
 		return _HlPrim.RNL_host_set_relay_rate_limiter_per_port(a_host, a_value);
 	}
 	public static function RNL_host_get_rate_limiter_relay_address_burst(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_rate_limiter_relay_address_burst_hi(a_host), _HlPrim.RNL_host_get_rate_limiter_relay_address_burst_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_rate_limiter_relay_address_burst_lo(a_host), _HlPrim.RNL_host_get_rate_limiter_relay_address_burst_hi(a_host));
 	}
 	public static function RNL_host_set_rate_limiter_relay_address_burst(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_rate_limiter_relay_address_burst(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_rate_limiter_relay_address_period(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_rate_limiter_relay_address_period_hi(a_host), _HlPrim.RNL_host_get_rate_limiter_relay_address_period_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_rate_limiter_relay_address_period_lo(a_host), _HlPrim.RNL_host_get_rate_limiter_relay_address_period_hi(a_host));
 	}
 	public static function RNL_host_set_rate_limiter_relay_address_period(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_rate_limiter_relay_address_period(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_rate_limiter_host_address_burst(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_rate_limiter_host_address_burst_hi(a_host), _HlPrim.RNL_host_get_rate_limiter_host_address_burst_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_rate_limiter_host_address_burst_lo(a_host), _HlPrim.RNL_host_get_rate_limiter_host_address_burst_hi(a_host));
 	}
 	public static function RNL_host_set_rate_limiter_host_address_burst(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_rate_limiter_host_address_burst(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_rate_limiter_host_address_period(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_rate_limiter_host_address_period_hi(a_host), _HlPrim.RNL_host_get_rate_limiter_host_address_period_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_rate_limiter_host_address_period_lo(a_host), _HlPrim.RNL_host_get_rate_limiter_host_address_period_hi(a_host));
 	}
 	public static function RNL_host_set_rate_limiter_host_address_period(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_rate_limiter_host_address_period(a_host, _low(a_value), _high(a_value));
 	}
 	public static function RNL_host_get_stun_query_timeout(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_stun_query_timeout_hi(a_host), _HlPrim.RNL_host_get_stun_query_timeout_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_stun_query_timeout_lo(a_host), _HlPrim.RNL_host_get_stun_query_timeout_hi(a_host));
 	}
 	public static function RNL_host_set_stun_query_timeout(a_host:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_host_set_stun_query_timeout(a_host, _low(a_value), _high(a_value));
@@ -1497,61 +1497,61 @@ class Raw {
 		return _HlPrim.RNL_host_get_count_peers(a_host);
 	}
 	public static function RNL_host_get_total_received_data(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_received_data_hi(a_host), _HlPrim.RNL_host_get_total_received_data_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_received_data_lo(a_host), _HlPrim.RNL_host_get_total_received_data_hi(a_host));
 	}
 	public static function RNL_host_get_total_received_packets(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_received_packets_hi(a_host), _HlPrim.RNL_host_get_total_received_packets_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_received_packets_lo(a_host), _HlPrim.RNL_host_get_total_received_packets_hi(a_host));
 	}
 	public static function RNL_host_get_total_soft_send_failures(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_soft_send_failures_hi(a_host), _HlPrim.RNL_host_get_total_soft_send_failures_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_soft_send_failures_lo(a_host), _HlPrim.RNL_host_get_total_soft_send_failures_hi(a_host));
 	}
 	public static function RNL_host_get_total_hard_send_failures(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_hard_send_failures_hi(a_host), _HlPrim.RNL_host_get_total_hard_send_failures_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_hard_send_failures_lo(a_host), _HlPrim.RNL_host_get_total_hard_send_failures_hi(a_host));
 	}
 	public static function RNL_host_get_total_hard_receive_failures(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_hard_receive_failures_hi(a_host), _HlPrim.RNL_host_get_total_hard_receive_failures_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_hard_receive_failures_lo(a_host), _HlPrim.RNL_host_get_total_hard_receive_failures_hi(a_host));
 	}
 	public static function RNL_host_get_total_dropped_outgoing_messages(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_dropped_outgoing_messages_hi(a_host), _HlPrim.RNL_host_get_total_dropped_outgoing_messages_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_dropped_outgoing_messages_lo(a_host), _HlPrim.RNL_host_get_total_dropped_outgoing_messages_hi(a_host));
 	}
 	public static function RNL_host_get_total_peers_given_up_on(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_peers_given_up_on_hi(a_host), _HlPrim.RNL_host_get_total_peers_given_up_on_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_peers_given_up_on_lo(a_host), _HlPrim.RNL_host_get_total_peers_given_up_on_hi(a_host));
 	}
 	public static function RNL_host_get_total_outgoing_bandwidth_deferred_dispatches(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_outgoing_bandwidth_deferred_dispatches_hi(a_host), _HlPrim.RNL_host_get_total_outgoing_bandwidth_deferred_dispatches_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_outgoing_bandwidth_deferred_dispatches_lo(a_host), _HlPrim.RNL_host_get_total_outgoing_bandwidth_deferred_dispatches_hi(a_host));
 	}
 	public static function RNL_host_get_total_stalled_retransmissions(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_stalled_retransmissions_hi(a_host), _HlPrim.RNL_host_get_total_stalled_retransmissions_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_stalled_retransmissions_lo(a_host), _HlPrim.RNL_host_get_total_stalled_retransmissions_hi(a_host));
 	}
 	public static function RNL_host_get_total_discarded_stale_outgoing_block_packets(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_discarded_stale_outgoing_block_packets_hi(a_host), _HlPrim.RNL_host_get_total_discarded_stale_outgoing_block_packets_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_discarded_stale_outgoing_block_packets_lo(a_host), _HlPrim.RNL_host_get_total_discarded_stale_outgoing_block_packets_hi(a_host));
 	}
 	public static function RNL_host_get_total_rejected_remote_long_term_public_keys(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_rejected_remote_long_term_public_keys_hi(a_host), _HlPrim.RNL_host_get_total_rejected_remote_long_term_public_keys_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_rejected_remote_long_term_public_keys_lo(a_host), _HlPrim.RNL_host_get_total_rejected_remote_long_term_public_keys_hi(a_host));
 	}
 	public static function RNL_host_get_total_accepted_certificates(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_accepted_certificates_hi(a_host), _HlPrim.RNL_host_get_total_accepted_certificates_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_accepted_certificates_lo(a_host), _HlPrim.RNL_host_get_total_accepted_certificates_hi(a_host));
 	}
 	public static function RNL_host_get_total_rejected_certificates(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_rejected_certificates_hi(a_host), _HlPrim.RNL_host_get_total_rejected_certificates_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_rejected_certificates_lo(a_host), _HlPrim.RNL_host_get_total_rejected_certificates_hi(a_host));
 	}
 	public static function RNL_host_get_total_rate_limited_connection_requests(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_rate_limited_connection_requests_hi(a_host), _HlPrim.RNL_host_get_total_rate_limited_connection_requests_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_rate_limited_connection_requests_lo(a_host), _HlPrim.RNL_host_get_total_rate_limited_connection_requests_hi(a_host));
 	}
 	public static function RNL_host_get_total_relayed_connection_requests(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_relayed_connection_requests_hi(a_host), _HlPrim.RNL_host_get_total_relayed_connection_requests_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_relayed_connection_requests_lo(a_host), _HlPrim.RNL_host_get_total_relayed_connection_requests_hi(a_host));
 	}
 	public static function RNL_host_get_total_relay_ceiling_rate_limited_connection_requests(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_relay_ceiling_rate_limited_connection_requests_hi(a_host), _HlPrim.RNL_host_get_total_relay_ceiling_rate_limited_connection_requests_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_relay_ceiling_rate_limited_connection_requests_lo(a_host), _HlPrim.RNL_host_get_total_relay_ceiling_rate_limited_connection_requests_hi(a_host));
 	}
 	public static function RNL_host_get_total_simultaneous_connects_won(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_simultaneous_connects_won_hi(a_host), _HlPrim.RNL_host_get_total_simultaneous_connects_won_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_simultaneous_connects_won_lo(a_host), _HlPrim.RNL_host_get_total_simultaneous_connects_won_hi(a_host));
 	}
 	public static function RNL_host_get_total_simultaneous_connects_given_up(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_simultaneous_connects_given_up_hi(a_host), _HlPrim.RNL_host_get_total_simultaneous_connects_given_up_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_simultaneous_connects_given_up_lo(a_host), _HlPrim.RNL_host_get_total_simultaneous_connects_given_up_hi(a_host));
 	}
 	public static function RNL_host_get_total_peer_address_changes(a_host:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_host_get_total_peer_address_changes_hi(a_host), _HlPrim.RNL_host_get_total_peer_address_changes_lo(a_host));
+		return _mk(_HlPrim.RNL_host_get_total_peer_address_changes_lo(a_host), _HlPrim.RNL_host_get_total_peer_address_changes_hi(a_host));
 	}
 	public static function RNL_host_get_connection_attempts_per_second(a_host:hl.Bytes):Int {
 		return _HlPrim.RNL_host_get_connection_attempts_per_second(a_host);
@@ -1806,7 +1806,7 @@ class Raw {
 		return _HlPrim.RNL_peer_get_mtu(a_peer);
 	}
 	public static function RNL_peer_get_remote_host_salt(a_peer:hl.Bytes):Int64 {
-		return _mk(_HlPrim.RNL_peer_get_remote_host_salt_hi(a_peer), _HlPrim.RNL_peer_get_remote_host_salt_lo(a_peer));
+		return _mk(_HlPrim.RNL_peer_get_remote_host_salt_lo(a_peer), _HlPrim.RNL_peer_get_remote_host_salt_hi(a_peer));
 	}
 	public static function RNL_peer_set_remote_host_salt(a_peer:hl.Bytes, a_value:Int64):Int {
 		return _HlPrim.RNL_peer_set_remote_host_salt(a_peer, _low(a_value), _high(a_value));
