@@ -8,7 +8,15 @@ import rnl.Enums.CertVerdict;
 import rnl.Enums.EventType;
 
 @:headerCode('#include "rnl.h"
-static int32_t _rnl_token_accept_all(void*,int32_t,const struct rnl_address*,const void*,void*) { return 1; }')
+static int32_t _rnl_token_accept_all(void*,int32_t,const struct rnl_address*,const void*,void*) { return 1; }
+static hx::Object* g_haxe_token_fn = nullptr;
+static int32_t _rnl_custom_token_dispatch(rnl_host_h host, int32_t kind,
+	const struct rnl_address *addr, const void *token, void *ud) {
+	if (!g_haxe_token_fn) return 1;
+	::Dynamic fn(g_haxe_token_fn);
+	::Dynamic result = fn(kind);
+	return result->__ToInt() ? 1 : 0;
+}')
 class Host extends HandleWrapper
 {
 	var _evBuf:Bytes;
@@ -219,9 +227,41 @@ class Host extends HandleWrapper
 		checkConnectionTokens = false;
 		checkAuthenticationTokens = false;
 		#if cpp
+		untyped __cpp__('g_haxe_token_fn = nullptr');
 		Raw.RNL_host_set_on_check_token_callback(h(), null, null);
 		#elseif hl
 		TokenCheckPrims.set_token_check_off(cast h());
+		#end
+	}
+
+	/**
+		Set a custom token check callback (Haxe closure).
+		The callback receives `kind:Int` (1=connection, 2=authentication)
+		and returns `Bool` — true to accept, false to deny.
+		Called synchronously during handshake on the service() thread.
+
+		Example:
+		```haxe
+		srv.setCustomTokenCallback(function(kind:Int):Bool {
+			return kind == 1; // accept connection tokens only
+		});
+		srv.checkConnectionTokens = true;
+		srv.checkAuthenticationTokens = true;
+		```
+	**/
+	public function setCustomTokenCallback(fn:Int->Bool):Void
+	{
+		#if cpp
+		var fnDyn:Dynamic = fn;
+		untyped __cpp__('g_haxe_token_fn = {0}.mPtr', fnDyn);
+		var ptr = h();
+		untyped __cpp__('RNL_host_set_on_check_token_callback((rnl_host_h){0},_rnl_custom_token_dispatch,nullptr)', ptr);
+		checkConnectionTokens = true;
+		checkAuthenticationTokens = true;
+		#elseif hl
+		TokenCheckPrims.set_custom_token_check(cast h(), cast fn);
+		checkConnectionTokens = true;
+		checkAuthenticationTokens = true;
 		#end
 	}
 
@@ -882,5 +922,6 @@ private extern class TokenCheckPrims
 	static function set_token_check_accept_all(host:hl.Bytes):Void;
 	static function set_token_check_deny_all(host:hl.Bytes):Void;
 	static function set_token_check_off(host:hl.Bytes):Void;
+	static function set_custom_token_check(host:hl.Bytes, callback:Dynamic):Void;
 }
 #end

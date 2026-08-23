@@ -3041,3 +3041,29 @@ HL_PRIM void HL_NAME(set_token_check_off)(rnl_host_h a_host) {
 	RNL_host_set_on_check_token_callback(a_host, NULL, NULL);
 }
 DEFINE_PRIM(_VOID, set_token_check_off, _BYTES);
+
+/* Custom token callback bridge: accepts an HL closure
+ *   fn(kind:Int) -> Bool
+ * Return true to accept, false to deny.
+ */
+static vclosure *g_custom_token_closure = NULL;
+
+static int32_t _rnl_custom_token_dispatch(rnl_host_h host, int32_t kind, const struct rnl_address *addr, const void *token, void *ud) {
+	if (!g_custom_token_closure) return 1;
+	vdynamic *args[1];
+	memset(args, 0, sizeof(args));
+	args[0] = hl_alloc_dynamic(&hlt_i32);
+	hl_dyn_seti(args[0], -1, &hlt_i32, kind);
+	vdynamic *ret = hl_dyn_call(g_custom_token_closure, args, 1);
+	if (!ret) return 1;
+	if (ret->t == &hlt_bool) return ret->v.b ? 1 : 0;
+	if (ret->t == &hlt_i32) return ret->v.i ? 1 : 0;
+	return 1;
+}
+
+HL_PRIM void HL_NAME(set_custom_token_check)(rnl_host_h a_host, vclosure *a_callback) {
+	g_custom_token_closure = a_callback;
+	RNL_host_set_on_check_token_callback(a_host,
+		a_callback ? _rnl_custom_token_dispatch : NULL, NULL);
+}
+DEFINE_PRIM(_VOID, set_custom_token_check, _BYTES _DYN);
