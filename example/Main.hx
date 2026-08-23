@@ -405,13 +405,15 @@ class Main
 		var peer = p.cli.connect(p.addr, 1, haxe.Int64.ofInt(0xAB));
 		var approved = false;
 		var connectData = haxe.Int64.ofInt(0);
+		var srvSawConnect = false;
 
 		pump(p, 4000,
 			function(ev) if (ev.type == EventType.PeerConnect) {
+				srvSawConnect = true;
 				connectData = ev.data;
 			},
 			function(ev) if (ev.type == EventType.PeerApproval) approved = true,
-			function() return approved);
+			function() return approved && srvSawConnect);
 
 		// connection should succeed (accept-all C callback)
 		// and server should see the client's data (0xAB)
@@ -421,7 +423,7 @@ class Main
 		p.srv.disableTokenCheck();
 
 		ok(name, flagsOk && approved && dataOk,
-			'flags=$flagsOk approved=$approved connectData=${connectData.low}');
+			'flags=$flagsOk approved=$approved srvConnect=$srvSawConnect data=${connectData.low}');
 	}
 
 	// ------------------------------------------- 7 handlers / flush / dns

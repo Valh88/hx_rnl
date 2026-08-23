@@ -209,6 +209,8 @@ class Host extends HandleWrapper
 		#if cpp
 		var ptr = h();
 		untyped __cpp__('RNL_host_set_on_check_token_callback((rnl_host_h){0},_rnl_token_accept_all,nullptr)', ptr);
+		#elseif hl
+		TokenCheckPrims.set_token_check_accept_all(cast h());
 		#end
 	}
 
@@ -216,7 +218,11 @@ class Host extends HandleWrapper
 	public function disableTokenCheck():Void {
 		checkConnectionTokens = false;
 		checkAuthenticationTokens = false;
+		#if cpp
 		Raw.RNL_host_set_on_check_token_callback(h(), null, null);
+		#elseif hl
+		TokenCheckPrims.set_token_check_off(cast h());
+		#end
 	}
 
 	// ------------------------------------------------------ certificates
@@ -868,3 +874,12 @@ class Host extends HandleWrapper
 		Raw.RNL_host_broadcast_message_data(h(), channel, Native.data(data), data.length, 0);
 	}
 }
+
+#if hl
+@:hlNative("rnl")
+private extern class TokenCheckPrims {
+	static function set_token_check_accept_all(host:hl.Bytes):Void;
+	static function set_token_check_deny_all(host:hl.Bytes):Void;
+	static function set_token_check_off(host:hl.Bytes):Void;
+}
+#end

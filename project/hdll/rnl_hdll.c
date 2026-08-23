@@ -3020,3 +3020,24 @@ int HL_NAME(_rnl_channel_get_count_pending_outgoing)(void* a_channel) {
 }
 DEFINE_PRIM(_I32,_rnl_channel_get_count_pending_outgoing,_BYTES);
 
+
+/* Token check trampolines — allow enabling token checking without
+ * passing Haxe closures through FFI. The C-level callback accepts or
+ * denies ALL tokens; fine-grained logic goes in onPeerConnect. */
+static int32_t _rnl_token_accept_all(rnl_host_h h, int32_t k, const struct rnl_address *a, const void *t, void *u) { return 1; }
+static int32_t _rnl_token_deny_all(rnl_host_h h, int32_t k, const struct rnl_address *a, const void *t, void *u) { return 0; }
+
+HL_PRIM void HL_NAME(set_token_check_accept_all)(rnl_host_h a_host) {
+	RNL_host_set_on_check_token_callback(a_host, _rnl_token_accept_all, NULL);
+}
+DEFINE_PRIM(_VOID, set_token_check_accept_all, _BYTES);
+
+HL_PRIM void HL_NAME(set_token_check_deny_all)(rnl_host_h a_host) {
+	RNL_host_set_on_check_token_callback(a_host, _rnl_token_deny_all, NULL);
+}
+DEFINE_PRIM(_VOID, set_token_check_deny_all, _BYTES);
+
+HL_PRIM void HL_NAME(set_token_check_off)(rnl_host_h a_host) {
+	RNL_host_set_on_check_token_callback(a_host, NULL, NULL);
+}
+DEFINE_PRIM(_VOID, set_token_check_off, _BYTES);

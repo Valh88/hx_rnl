@@ -361,4 +361,33 @@ for ret,name,args in entries:
     C.append('')
 
 open(os.path.join(ROOT,'project/hdll/rnl_hdll.c'),'w').write('\n'.join(C)+'\n')
-print('rnl_hdll.c:', sum(1 for l in C if l.startswith('DEFINE_PRIM')), 'prims')
+
+# --- Token check trampolines (appended after main prims) ---
+T = []
+T.append('')
+T.append('/* Token check trampolines — allow enabling token checking without')
+T.append(' * passing Haxe closures through FFI. The C-level callback accepts or')
+T.append(' * denies ALL tokens; fine-grained logic goes in onPeerConnect. */')
+T.append('static int32_t _rnl_token_accept_all(rnl_host_h h, int32_t k, const struct rnl_address *a, const void *t, void *u) { return 1; }')
+T.append('static int32_t _rnl_token_deny_all(rnl_host_h h, int32_t k, const struct rnl_address *a, const void *t, void *u) { return 0; }')
+T.append('')
+T.append('HL_PRIM void HL_NAME(set_token_check_accept_all)(rnl_host_h a_host) {')
+T.append('\tRNL_host_set_on_check_token_callback(a_host, _rnl_token_accept_all, NULL);')
+T.append('}')
+T.append('DEFINE_PRIM(_VOID, set_token_check_accept_all, _BYTES);')
+T.append('')
+T.append('HL_PRIM void HL_NAME(set_token_check_deny_all)(rnl_host_h a_host) {')
+T.append('\tRNL_host_set_on_check_token_callback(a_host, _rnl_token_deny_all, NULL);')
+T.append('}')
+T.append('DEFINE_PRIM(_VOID, set_token_check_deny_all, _BYTES);')
+T.append('')
+T.append('HL_PRIM void HL_NAME(set_token_check_off)(rnl_host_h a_host) {')
+T.append('\tRNL_host_set_on_check_token_callback(a_host, NULL, NULL);')
+T.append('}')
+T.append('DEFINE_PRIM(_VOID, set_token_check_off, _BYTES);')
+
+# Append trampolines to the hdll file
+hdll_path = os.path.join(ROOT,'project/hdll/rnl_hdll.c')
+with open(hdll_path,'a') as f:
+    f.write('\n'.join(T)+'\n')
+print('rnl_hdll.c: +3 token check trampoline prims')
