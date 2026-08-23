@@ -171,7 +171,7 @@ class Main {
 
 		var total = 50;
 		var rCount = 0, uCount = 0, rOrdered = true, rLast = -1;
-		var sentAll = false, ticks = 0;
+		var sentAll = false, ticks = 0, rDoneTick = -1;
 
 		pump(p, 40000,
 			function(ev) if (ev.type == EventType.PeerReceive) {
@@ -192,7 +192,13 @@ class Main {
 					uCh.send(b); // individual datagrams may be dropped
 				}
 			},
-			function() { ticks++; return (rCount >= total && ticks > 500) || ticks > 35000; });
+			function() {
+				ticks++;
+				if (rCount >= total && rDoneTick < 0) rDoneTick = ticks;
+				// fixed drain window after reliable completion so the
+				// unreliable count settles before we stop servicing
+				return (rDoneTick > 0 && ticks > rDoneTick + 1500) || ticks > 35000;
+			});
 
 		ok(name, sentAll && rCount == total && rOrdered,
 			'reliable $rCount/$total ordered=$rOrdered | unreliable $uCount/$total (dropped=${total - uCount})');

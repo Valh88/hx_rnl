@@ -79,9 +79,22 @@ does `dec_ref`. Reading payload without inc_ref works only before eventFree.
 `source/rnl/*.hx` mirrors the Pascal `TRNL*` classes in Haxe style (camelCase
 properties, enum abstracts, exceptions instead of status codes). Host exposes
 ~90 config/statistics properties, Peer ~25 telemetry properties — all generated
-from the `RNL_host/peer_get_*/set_*` pairs. Not wrapped yet (use `Raw.*`):
-STUN client, Discovery, TURN relay, DTLS clients, Compressors, crypto helpers,
-Host certificate API, NAT candidate gathering.
+from the `RNL_host/peer_get_*/set_*` pairs.
+
+Event ergonomics: classic poll (`service()` returns `RnlEvent`, caller calls
+`eventFree()`) AND callback-style sugar — set any of
+`host.onPeerConnect/onPeerDisconnect/onPeerApproval/onPeerDenial/
+onPeerBandwidthLimits/onPeerMtu/onPeerReceive`; `service()` then dispatches to
+the handler and frees the event itself (returns null). These are Haxe-side
+dispatchers over the polling core, NOT C function-pointer callbacks — the raw
+`RNL_host_set_on_*` API stays unwrapped because passing real C fn pointers
+from Haxe closures needs per-target trampolines (deferred).
+
+Also wrapped: `Host.flush()/interrupt()`, `Network.resolveHost(name, family)`
+(DNS through the network's resolver, RealNetwork only). Still raw-only:
+STUN queries (struct-by-value arg), NAT candidates/gather/punch,
+Discovery, TURN relay, DTLS clients, Compressors, crypto helpers,
+Host certificate API.
 
 ## Debugging workflow
 
