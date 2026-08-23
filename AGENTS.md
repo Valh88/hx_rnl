@@ -58,6 +58,22 @@ The `libpath` in `RnlBuild.hx` is hardcoded — adjust it when the checkout move
 ## hxcpp FFI rules (hard-won)
 
 - **Never box native handles through `Dynamic` on cpp** — handle values can be lost. `HandleWrapper.h()` and `*.native()` return `cpp.Star<cpp.Void>` on cpp (`Dynamic` elsewhere). Keep it that way.
+- **Every new wrapper class with a native handle MUST use this pattern:**
+	```haxe
+	#if cpp
+	inline function h():cpp.Star<cpp.Void> return Native.i64ToPtr(_lo, _hi);
+	#else
+	inline function h():Dynamic return Native.i64ToPtr(_lo, _hi);
+	#end
+	```
+	Returning `Dynamic` instead of `cpp.Star<cpp.Void>` on cpp causes the raw
+	pointer value to be boxed into an hx::Object* wrapper; when later unboxed via
+	`Pointer<void>(dynamic).get_raw()`, the original address is corrupted.
+	Symptoms: natively valid calls return error -1 (INVALID_ARGUMENT), getters
+	return neutral 0, payload reads segfault — while the same code works fine
+	on hl (where `hl.Bytes` IS the native pointer type) and in pure C.
+	Compressor.hx hit exactly this: `h():Dynamic` worked on hl/hlc but returned
+	error -1 on cpp until changed to `cpp.Star<cpp.Void>`.
 - **Two kinds of handle args — know which one you're calling:**
   - `T *out` (create functions): pass the buffer itself → `Native.data(buf)`.
   - handle by value (use/destroy functions): reconstruct via lo/hi → `Native.i64ToPtr(lo, hi)` / `h()`. Passing `Native.data(handleBuf)` here silently corrupts the call (getters return neutral 0, payload reads segfault). `Message`/`Random` store lo/hi and use `h()` for this reason.
@@ -65,6 +81,7 @@ The `libpath` in `RnlBuild.hx` is hardcoded — adjust it when the checkout move
 - `-fpermissive` compiler flag is required (`RnlBuild.hx`): the C API uses typed output params (`void**`, `int32_t*`, `size_t*`) but Haxe externs declare all pointers as `Ptr` (`void*`). Without the flag these become hard errors.
 - Struct-by-value params (`const struct rnl_address`) cannot be called through the externs at all — `Address.hx` uses `untyped __cpp__('RNL_...(*(struct rnl_address*){0}->b->GetBase())', _buf)` under `#if cpp` for those calls.
 - `Native.data()`/`charData()` use `__cpp__('(void*){0}->b->GetBase()', b)` because `b.getData()` returns an hxcpp Array object, not a pointer.
+- `@:headerCode('#include "rnl.h"')` must be placed **directly above each class declaration** that calls Raw functions (not floating between imports and enums — enum abstracts don't generate .cpp files so their metadata is ignored).
 
 ## RnlEvent wire layout (verified by byte-dump)
 
