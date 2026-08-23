@@ -7,6 +7,7 @@
 -D hlgen.makefile
 --next
 -hl bin/hl/Main.hl
+#LD_LIBRARY_PATH=bin/hl hl bin/hl/Main.hl
 --next
 -cpp bin/cpp
 

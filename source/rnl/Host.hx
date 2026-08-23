@@ -7,7 +7,8 @@ import rnl.Enums.ChannelType;
 import rnl.Enums.CertVerdict;
 import rnl.Enums.EventType;
 
-@:headerCode('#include "rnl.h"')
+@:headerCode('#include "rnl.h"
+static int32_t _rnl_token_accept_all(void*,int32_t,const struct rnl_address*,const void*,void*) { return 1; }')
 class Host extends HandleWrapper
 {
 	var _evBuf:Bytes;
@@ -29,11 +30,11 @@ class Host extends HandleWrapper
 	public var onPeerMtu:Null<RnlEvent->Void>;
 	public var onPeerReceive:Null<RnlEvent->Void>;
 	/**
-		Token check handlers — currently NON-FUNCTIONAL.
-		The C ABI (RNLDynLib.pas) does not expose the synchronous boolean
-		callback needed for accept/deny decisions. Enabling
-		`checkConnectionTokens` has no effect without a native callback.
-		Requires adding `RNL_host_set_on_check_token_callback` to RNLDynLib.pas.
+		Token check handlers — called for CHECK_TOKEN events (types 1/2).
+		Requires `enableTokenCheck()` to be called first (sets up C callback).
+		These events fire during handshake; return value is advisory only
+		(the synchronous C callback already accepted). Use onPeerConnect +
+		disconnect() for post-connect rejection.
 	**/
 	public var onPeerCheckConnectionToken:Null<RnlEvent->Bool>;
 	public var onPeerCheckAuthenticationToken:Null<RnlEvent->Bool>;
@@ -193,6 +194,30 @@ class Host extends HandleWrapper
 	/** Wake a host blocked inside service() from another thread. */
 	public function interrupt():Void
 		Raw.RNL_host_interrupt(h());
+
+	// ------------------------------------------------------ token checking
+
+	/**
+		Enable synchronous connection token checking with an "always accept"
+		C-level callback. Fine-grained accept/deny logic should be done in the
+		`onPeerConnect` handler (check `ev.data`, call `peer.disconnect()` if bad).
+		This provides DDoS amplification protection at the protocol level.
+	**/
+	public function enableTokenCheck():Void {
+		checkConnectionTokens = true;
+		checkAuthenticationTokens = true;
+		#if cpp
+		var ptr = h();
+		untyped __cpp__('RNL_host_set_on_check_token_callback((rnl_host_h){0},_rnl_token_accept_all,nullptr)', ptr);
+		#end
+	}
+
+	/** Disable token checking and remove the callback. */
+	public function disableTokenCheck():Void {
+		checkConnectionTokens = false;
+		checkAuthenticationTokens = false;
+		Raw.RNL_host_set_on_check_token_callback(h(), null, null);
+	}
 
 	// ------------------------------------------------------ certificates
 

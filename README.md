@@ -58,8 +58,8 @@ output automatically (`<copyFile>`), and the binary carries
 
 | Target | Command | Runtime deps | Status |
 |---|---|---|---|
-| **hxcpp** | `--cpp bin/cpp` | librnl.so next to binary or LD_LIBRARY_PATH | ✅ working |
-| **hl bytecode** | `--hl bin/hl/app.hl` | hl interpreter + rnl.hdll + librnl.so | ✅ working |
+| **hxcpp** | `--cpp bin/cpp` | nothing — auto-copied + rpath baked in | ✅ working |
+| **hl bytecode** | `--hl bin/hl/app.hl` | rnl.hdll + librnl.so next to .hl; run with `LD_LIBRARY_PATH=bin/hl` | ✅ working |
 | **hl/c native** | `--hl bin/hl/app.c` then gcc | rnl.hdll + librnl.so; requires HL SDK sources | ⏳ needs hlc |
 | **macOS/iOS stubs** | `--cpp` on mac/ios | throws RawUnavailable | 🔒 placeholder |
 

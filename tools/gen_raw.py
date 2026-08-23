@@ -29,7 +29,7 @@ entries = []
 for ret, name, args in pat.findall(src):
     args = re.sub(r'\s+', ' ', args).strip()
     entries.append((ret.strip(), name, args))
-assert len(entries) == 458, f'expected 458 exports, got {len(entries)}'
+assert len(entries) == 459, f'expected 459 exports, got {len(entries)}'
 
 I64 = ('uint64_t', 'int64_t')
 

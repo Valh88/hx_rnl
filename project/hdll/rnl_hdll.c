@@ -250,6 +250,7 @@ int32_t RNL_host_set_on_peer_approval(rnl_host_h a_host, rnl_cb_peer_approval a_
 int32_t RNL_host_set_on_peer_denial(rnl_host_h a_host, rnl_cb_peer_denial a_callback, void *a_user_data);
 int32_t RNL_host_set_on_peer_bandwidth_limits(rnl_host_h a_host, rnl_cb_peer_bandwidth_limits a_callback, void *a_user_data);
 int32_t RNL_host_set_on_peer_mtu(rnl_host_h a_host, rnl_cb_peer_mtu a_callback, void *a_user_data);
+int32_t RNL_host_set_on_check_token_callback(rnl_host_h a_host, rnl_cb_check_token a_callback, void *a_user_data);
 int32_t RNL_host_get_allow_incoming_connections(rnl_host_h a_host);
 int32_t RNL_host_set_allow_incoming_connections(rnl_host_h a_host, const int32_t a_value);
 uint32_t RNL_host_get_maximum_count_peers(rnl_host_h a_host);
@@ -1659,6 +1660,11 @@ int HL_NAME(_rnl_host_set_on_peer_mtu)(void* a_host, void* a_callback, void* a_u
 	return RNL_host_set_on_peer_mtu(a_host, a_callback, a_user_data);
 }
 DEFINE_PRIM(_I32,_rnl_host_set_on_peer_mtu,_BYTES _BYTES _BYTES);
+
+int HL_NAME(_rnl_host_set_on_check_token_callback)(void* a_host, void* a_callback, void* a_user_data) {
+	return RNL_host_set_on_check_token_callback(a_host, a_callback, a_user_data);
+}
+DEFINE_PRIM(_I32,_rnl_host_set_on_check_token_callback,_BYTES _BYTES _BYTES);
 
 int HL_NAME(_rnl_host_get_allow_incoming_connections)(void* a_host) {
 	return RNL_host_get_allow_incoming_connections(a_host);

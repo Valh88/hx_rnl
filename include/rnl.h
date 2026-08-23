@@ -107,6 +107,15 @@ typedef void (*rnl_cb_peer_bandwidth_limits)(rnl_host_h host, rnl_peer_h peer, v
 typedef void (*rnl_cb_peer_mtu)(rnl_host_h host, rnl_peer_h peer, uint16_t mtu, void *user_data);
 typedef void (*rnl_cb_peer_receive)(rnl_host_h host, rnl_peer_h peer, uint8_t channel, rnl_message_h message, void *user_data);
 
+/* Synchronous token check, invoked while the corresponding handshake packet is
+ * processed. token_kind is RNL_C_HOST_EVENT_TYPE_PEER_CHECK_CONNECTION_TOKEN or
+ * RNL_C_HOST_EVENT_TYPE_PEER_CHECK_AUTHENTICATION_TOKEN; address points at the
+ * remote rnl_address and token at the fixed-size token blob (128 bytes for
+ * both kinds). Return nonzero to accept the peer, zero to deny it (the request
+ * is then silently dropped). The callback runs on the thread calling
+ * host_service. */
+typedef int32_t (*rnl_cb_check_token)(rnl_host_h host, int32_t token_kind, const struct rnl_address *address, const void *token, void *user_data);
+
 /* constants */
 #define RNL_C_NO_ADDRESS_FAMILY 0
 #define RNL_C_IPV4 1 << 0
@@ -439,6 +448,7 @@ RNL_API int32_t RNL_host_set_on_peer_approval(rnl_host_h a_host, rnl_cb_peer_app
 RNL_API int32_t RNL_host_set_on_peer_denial(rnl_host_h a_host, rnl_cb_peer_denial a_callback, void *a_user_data);
 RNL_API int32_t RNL_host_set_on_peer_bandwidth_limits(rnl_host_h a_host, rnl_cb_peer_bandwidth_limits a_callback, void *a_user_data);
 RNL_API int32_t RNL_host_set_on_peer_mtu(rnl_host_h a_host, rnl_cb_peer_mtu a_callback, void *a_user_data);
+RNL_API int32_t RNL_host_set_on_check_token_callback(rnl_host_h a_host, rnl_cb_check_token a_callback, void *a_user_data);
 RNL_API int32_t RNL_host_get_allow_incoming_connections(rnl_host_h a_host);
 RNL_API int32_t RNL_host_set_allow_incoming_connections(rnl_host_h a_host, const int32_t a_value);
 RNL_API uint32_t RNL_host_get_maximum_count_peers(rnl_host_h a_host);

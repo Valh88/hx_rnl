@@ -51,6 +51,7 @@ class Main
 		testHostConfig();
 		testHandlersFlushDns();
 		testCompressor();
+		testTokenCheck();
 		trace(failures == 0 ? 'ALL TESTS PASS' : 'FAILURES: $failures');
 		if (failures > 0)
 			Sys.exit(1);
@@ -387,6 +388,40 @@ class Main
 		var roundtrip = decompressed.length == original.length && Crypto.secureEquals(original, decompressed);
 		c.dispose();
 		ok(name, roundtrip, '${original.length}B -> ${compressed.length}B -> ${decompressed.length}B (${Std.int(compressed.length * 100 / original.length)}%)');
+	}
+
+	// -------------------------------------------------------- 9 token check
+
+	static function testTokenCheck() {
+		var name = "tokens";
+		var p = makePair();
+
+		// server enables synchronous token checking at the C level
+		p.srv.enableTokenCheck();
+		// verify flags are set
+		var flagsOk = p.srv.checkConnectionTokens && p.srv.checkAuthenticationTokens;
+
+		// client connects with identifiable data
+		var peer = p.cli.connect(p.addr, 1, haxe.Int64.ofInt(0xAB));
+		var approved = false;
+		var connectData = haxe.Int64.ofInt(0);
+
+		pump(p, 4000,
+			function(ev) if (ev.type == EventType.PeerConnect) {
+				connectData = ev.data;
+			},
+			function(ev) if (ev.type == EventType.PeerApproval) approved = true,
+			function() return approved);
+
+		// connection should succeed (accept-all C callback)
+		// and server should see the client's data (0xAB)
+		var dataOk = connectData.low == 0xAB && connectData.high == 0;
+
+		// disable token check for cleanup
+		p.srv.disableTokenCheck();
+
+		ok(name, flagsOk && approved && dataOk,
+			'flags=$flagsOk approved=$approved connectData=${connectData.low}');
 	}
 
 	// ------------------------------------------- 7 handlers / flush / dns

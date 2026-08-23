@@ -107,13 +107,15 @@ dispatchers over the polling core, NOT C function-pointer callbacks — the raw
 `RNL_host_set_on_*` API stays unwrapped because passing real C fn pointers
 from Haxe closures needs per-target trampolines (deferred).
 
-**Token check events (types 1/2) are NON-FUNCTIONAL through C ABI:**
-`RNLDynLib.pas` does not export the synchronous boolean callback needed for
-accept/deny decisions. Setting `host.checkConnectionTokens = true` has no
-effect — the internal Pascal callback stays nil so tokens pass unchecked.
-Handler fields exist (`onPeerCheckConnectionToken/AuthenticationToken`) but
-never fire. Fix requires adding `RNL_host_set_on_check_token_callback`
-export to RNLDynLib.pas + per-target trampolines.
+**Token check events (types 1/2):** `RNLDynLib.pas` now exports
+`RNL_host_set_on_check_token_callback` with `rnl_cb_check_token` typedef.
+Use `host.enableTokenCheck()` to enable synchronous accept-all checking at
+the C level (DDoS amplification protection). Fine-grained per-token decisions:
+use `onPeerConnect` + `peer.disconnect()` post-handshake. The Haxe-side
+`onPeerCheckConnectionToken/AuthenticationToken` handler fields exist but are
+advisory — the synchronous C callback already decided before the event fires.
+Custom C-level callbacks require passing a real function pointer through FFI
+(cpp: lambda via `__cpp__`; hl: needs hdll trampoline prim — deferred).
 
 Also wrapped: `Host.flush()/interrupt()`, `Network.resolveHost(name, family)`
 (DNS through the network's resolver, RealNetwork only), `Compressor` (Deflate /
