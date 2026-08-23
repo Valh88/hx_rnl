@@ -79,7 +79,42 @@ class Host extends HandleWrapper
 		if (st.getInt32(0) != 3)
 			return null;
 		var ev = new RnlEvent(this, _evBuf);
-		var handled = switch (ev.type)
+		if (dispatch(ev))
+		{
+			eventFree();
+			return null;
+		}
+		return ev;
+	}
+
+	/**
+		Process ALL pending events through handlers in one call.
+		First call waits up to `timeoutMs`, subsequent drains are non-blocking.
+		Returns the number of events processed.
+		Use this in the game loop instead of manual service()+eventFree().
+	**/
+	public function drainEvents(timeoutMs:Int = 0):Int
+	{
+		var count = 0;
+		var st = Bytes.alloc(4);
+		var wait = timeoutMs;
+		while (true)
+		{
+			Raw.RNL_host_service(h(), Native.data(_evBuf), haxe.Int64.ofInt(wait), Native.data(st));
+			if (st.getInt32(0) != 3)
+				break;
+			wait = 0; // drain remaining without blocking
+			var ev = new RnlEvent(this, _evBuf);
+			dispatch(ev);
+			eventFree();
+			count++;
+		}
+		return count;
+	}
+
+	function dispatch(ev:RnlEvent):Bool
+	{
+		return switch (ev.type)
 		{
 			case EventType.PeerConnect:
 				if (onPeerConnect != null)
@@ -125,12 +160,6 @@ class Host extends HandleWrapper
 				} else false;
 			default: false;
 		};
-		if (handled)
-		{
-			eventFree();
-			return null;
-		}
-		return ev;
 	}
 
 	public function eventFree():Void
