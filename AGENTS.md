@@ -104,6 +104,21 @@ Host certificate API.
    Haxe doesn't, it's a binding bug (usually Dynamic boxing or buffer-vs-handle).
 4. Test iteration order: hl (fastest compile) → hlc → cpp.
 
+## Memory management
+
+Native objects are **not garbage-collected on cpp** — `dispose()` must be called
+explicitly (HL GC may finalize, but timing is not guaranteed). Destroy order:
+dispose `Host` → dispose `Network` → dispose `Instance` (reverse of creation).
+
+- **Events** (from `service()`): borrowed until `eventFree()`. With callback
+  handlers (`onPeerXxx`), `service()` auto-frees handled events (returns null).
+- **Messages**: `Message` ctor takes `inc_ref`, `dispose()` does `dec_ref`.
+  Payload is valid until `Message.dispose()`.
+- **Peers**: `incRef()` before keeping a peer beyond the event/connection
+  lifetime; `decRef()` when done. `peer.disconnect()` sends goodbye but does
+  not destroy the peer object.
+- **Channels/Address/Compressor**: lightweight; no explicit dispose needed.
+
 ## Runtime deps
 
 - hxcpp: automatic — `RnlBuild.hx` ships `librnl.so` into the output dir via
