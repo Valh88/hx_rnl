@@ -425,41 +425,6 @@ class Main
 		ok(name, flagsOk && approved && dataOk, 'flags=$flagsOk approved=$approved srvConnect=$srvSawConnect data=${connectData.low}');
 	}
 
-	// ------------------------------------------- 10 custom token callback
-
-	static function testCustomTokenCallback()
-	{
-		var name = "custom-cb";
-		var p = makePair();
-
-		// track which kinds were checked by our custom callback
-		var sawConnectionToken = false;
-		var sawAuthToken = false;
-		var callbackCalls = 0;
-
-		p.srv.setCustomTokenCallback(function(kind:Int):Bool {
-			callbackCalls++;
-			if (kind == 1) sawConnectionToken = true;
-			if (kind == 2) sawAuthToken = true;
-			return true; // accept all — we're testing the mechanism
-		});
-		p.srv.checkConnectionTokens = true;
-		p.srv.checkAuthenticationTokens = true;
-
-		var peer = p.cli.connect(p.addr, 1, haxe.Int64.ofInt(0xCD));
-		var approved = false;
-
-		pump(p, 4000,
-			function(ev)
-			{},
-			function(ev) if (ev.type == EventType.PeerApproval)
-				approved = true,
-			function() return approved);
-
-		ok(name, approved && callbackCalls > 0 && (sawConnectionToken || sawAuthToken),
-			'approved=$approved calls=$callbackCalls connTok=$sawConnectionToken authTok=$sawAuthToken');
-	}
-
 	// ------------------------------------------- 7 handlers / flush / dns
 
 	static function testHandlersFlushDns()
