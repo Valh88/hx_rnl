@@ -1,9 +1,10 @@
 -cp ../source
 -main Main
 --each
--cpp bin/cpp 
--D HXCPP_M64
 --next
 -hl bin/hlc/Main.c
+-D hlgen.makefile
 --next
 -hl bin/hl/Main.hl
+--next
+-cpp bin/cpp

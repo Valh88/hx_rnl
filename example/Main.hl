@@ -1,8 +1,0 @@
-import rnl.Instance;
-class Main {
-	public static function main() {
-		var inst = new Instance();
-		trace('instance OK');
-		inst.dispose();
-	}
-}
