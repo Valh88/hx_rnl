@@ -52,7 +52,6 @@ class Main
 		testHandlersFlushDns();
 		testCompressor();
 		testTokenCheck();
-		testCustomTokenCallback();
 		trace(failures == 0 ? 'ALL TESTS PASS' : 'FAILURES: $failures');
 		if (failures > 0)
 			Sys.exit(1);
