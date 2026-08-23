@@ -1,13 +1,15 @@
 package rnl;
 
-enum abstract ServiceStatus(Int) {
+enum abstract ServiceStatus(Int)
+{
 	var Error;
 	var Timeout;
 	var Interrupt;
 	var Event;
 }
 
-enum abstract EventType(Int) {
+enum abstract EventType(Int)
+{
 	var EvtNone;
 	var PeerCheckConnectionToken;
 	var PeerCheckAuthenticationToken;
@@ -20,14 +22,16 @@ enum abstract EventType(Int) {
 	var PeerReceive;
 }
 
-enum abstract ChannelType(Int) {
+enum abstract ChannelType(Int)
+{
 	var ReliableOrdered;
 	var ReliableUnordered;
 	var UnreliableOrdered;
 	var UnreliableUnordered;
 }
 
-enum abstract PeerState(Int) {
+enum abstract PeerState(Int)
+{
 	var StDisconnected;
 	var StConnectionRequesting;
 	var StConnectionChallenging;
@@ -40,7 +44,8 @@ enum abstract PeerState(Int) {
 	var StDisconnectionPending;
 }
 
-enum abstract WorkMode(Int) {
+enum abstract WorkMode(Int)
+{
 	var WmAuto;
 	var WmV4Only;
 	var WmV6Only;
@@ -48,13 +53,15 @@ enum abstract WorkMode(Int) {
 	var WmV4AndV6;
 }
 
-enum abstract TranscriptBinding(Int) {
+enum abstract TranscriptBinding(Int)
+{
 	var TbOff;
 	var TbAllowed;
 	var TbRequired;
 }
 
-enum abstract DenialReason(Int) {
+enum abstract DenialReason(Int)
+{
 	var DenyUnknown;
 	var DenyFull;
 	var DenyTooFewChannels;
@@ -63,7 +70,8 @@ enum abstract DenialReason(Int) {
 	var DenyUnauthorized;
 }
 
-enum abstract CertVerdict(Int) {
+enum abstract CertVerdict(Int)
+{
 	var CertAccepted;
 	var CertAbsent;
 	var CertBadSignature;

@@ -31,4 +31,6 @@ package rnl.internal;
 	<!-- ship the runtime library into the build output automatically -->
 	<copyFile name="librnl.so" from="${haxelib:hxrnl}/ndll/Linux64" if="linux" />
 	<copyFile name="RNL.dll" from="${haxelib:hxrnl}/ndll/win64" if="windows" />')
-class RnlBuild {}
+class RnlBuild
+{
+}
